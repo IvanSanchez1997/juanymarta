@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1.0">
+<title>Juan & Marta · 11 Octubre 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=Great+Vibes&family=Cinzel:wght@300;400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --gold:       #c9a155;
+  --gold-light: #e8d5a0;
+  --gold-pale:  #f5edd8;
+  --cream:      #fefcf8;
+  --text:       #5a4535;
+  --text-light: #8a7060;
+}
+
+html { background: #ddd5cc; }
+
+body {
+  width: 390px;
+  margin: 0 auto;
+  background: var(--cream);
+  font-family: 'Jost', sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+  position: relative;
+}
+
+@media (min-width: 500px) {
+  html { display: flex; justify-content: center; min-height: 100vh; }
+  body { box-shadow: 0 0 80px rgba(0,0,0,0.25); min-height: 100vh; }
+}
+
+/* ═══════════════════════════════════════════
+   MANCHAS ACUARELA — sistema contenido
+   
+   REGLAS CLAVE para que no se salgan:
+   · story-block tiene overflow:hidden
+   · .wc-blob usa inset: 0 y width/height 100%
+   · El SVG interno usa preserveAspectRatio="none"
+     y viewBox 0 0 100 100 — coordenadas en %
+   · NADA sale del viewBox → nada se sale
+═══════════════════════════════════════════ */
+
+.story-block {
+  overflow: hidden;
+  position: relative;
+}
+/* Todo el contenido del bloque por encima del blob */
+.story-block > *:not(.wc-blob):not(.petals-wrap) {
+  position: relative; z-index: 1;
+}
+
+/* El blob ocupa EXACTAMENTE el bloque */
+.wc-blob {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  transform: scale(0.04);
+  opacity: 0;
+  transition:
+    transform 3s cubic-bezier(0.16,1,0.3,1),
+    opacity   2.4s ease;
+  transform-origin: center center;
+}
+.wc-blob.grow { transform: scale(1); opacity: 1; }
+.wc-blob svg  { width: 100%; height: 100%; display: block; }
+
+/* ══ PÉTALOS ══════════════════════════════ */
+.petals-wrap {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 0;
+  overflow: hidden;
+}
+.petal {
+  position: absolute;
+  top: -28px;
+  opacity: 0;
+  animation: petalFall linear infinite;
+}
+@keyframes petalFall {
+  0%   { opacity:0; transform: translateY(0)     rotate(0deg)   translateX(0)    scale(0.85); }
+  6%   { opacity:0.75; }
+  50%  { transform: translateY(50vh) rotate(200deg)  translateX(18px)  scale(1); }
+  90%  { opacity:0.55; }
+  100% { opacity:0; transform: translateY(105vh) rotate(420deg) translateX(-10px) scale(0.9); }
+}
+
+/* ═══════════════════════════════════════════
+   PORTADA
+═══════════════════════════════════════════ */
+#portada {
+  position: fixed; inset: 0;
+  width: 390px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  background: var(--cream);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity 1s ease;
+  overflow: hidden;
+}
+#portada.ocultar { opacity: 0; pointer-events: none; }
+
+.portada-inner {
+  position: relative; z-index: 2;
+  text-align: center; padding: 20px 40px;
+  animation: fadeUp 1.4s ease both;
+}
+
+.portada-pre {
+  font-family: 'Cinzel', serif;
+  font-size: 9px; letter-spacing: 6px;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 26px;
+}
+
+.monograma {
+  position: relative; width: 170px; height: 170px;
+  margin: 0 auto 18px;
+}
+.monograma svg.circle { position: absolute; inset: 0; width: 100%; height: 100%; }
+.monograma-letters {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 82px; font-weight: 400;
+  color: var(--gold); line-height: 1; letter-spacing: -4px;
+  text-shadow: 2px 3px 14px rgba(201,161,85,0.25);
+}
+.monograma-names {
+  position: absolute; bottom: 24px; left: 0; right: 0;
+  text-align: center;
+  font-family: 'Cinzel', serif; font-size: 8px;
+  letter-spacing: 6px; color: var(--gold); opacity: 0.75;
+}
+
+.portada-title {
+  font-family: 'Cinzel', serif; font-size: 20px;
+  font-weight: 300; letter-spacing: 4px;
+  color: var(--gold); margin: 14px 0 5px;
+}
+.portada-date {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 15px;
+  color: var(--text-light); letter-spacing: 2px;
+}
+.divider-gold {
+  width: 130px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  margin: 14px auto;
+}
+
+.btn-abrir {
+  margin-top: 24px; padding: 14px 38px;
+  border: 1px solid var(--gold); border-radius: 50px;
+  background: transparent; font-family: 'Cinzel', serif;
+  font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+  color: var(--text); cursor: pointer;
+  transition: all 0.35s ease; position: relative; overflow: hidden;
+}
+.btn-abrir::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  opacity: 0; transition: opacity 0.35s;
+}
+.btn-abrir:hover::before, .btn-abrir:active::before { opacity: 1; }
+.btn-abrir:hover { color: white; }
+.btn-abrir span { position: relative; z-index: 1; }
+
+/* ═══════════════════════════════════════════
+   CONTENIDO
+═══════════════════════════════════════════ */
+#contenido {
+  opacity: 0; transition: opacity 0.6s ease;
+  pointer-events: none; position: relative; z-index: 1;
+}
+#contenido.visible { opacity: 1; pointer-events: all; }
+
+/* ═══════════════════════════════════════════
+   BOTÓN FLOTANTE MÚSICA
+═══════════════════════════════════════════ */
+#music-btn {
+  position: fixed; bottom: 26px;
+  left: 50%; transform: translateX(153px);
+  z-index: 100;
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 1px solid rgba(201,161,85,0.45);
+  background: rgba(254,252,248,0.88);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; color: var(--gold);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  transition: opacity 0.5s, background 0.3s, color 0.3s;
+  opacity: 0; pointer-events: none;
+}
+#music-btn.show { opacity: 1; pointer-events: all; }
+#music-btn:hover { background: var(--gold); color: white; }
+#music-btn.playing { animation: btn-pulse 2.5s ease-in-out infinite; }
+@keyframes btn-pulse {
+  0%,100% { box-shadow: 0 4px 20px rgba(0,0,0,0.1), 0 0 0 0 rgba(201,161,85,0.35); }
+  50%      { box-shadow: 0 4px 20px rgba(0,0,0,0.1), 0 0 0 9px rgba(201,161,85,0); }
+}
+.ico-pause { display: none; }
+#music-btn.playing .ico-note  { display: none; }
+#music-btn.playing .ico-pause { display: block; }
+@media (max-width: 499px) {
+  #music-btn { left: auto; right: 18px; transform: none; }
+}
+
+/* ═══════════════════════════════════════════
+   IMAGEN HERO CINEMATOGRÁFICA
+   Ken Burns + parallax profundo + texto que emerge
+═══════════════════════════════════════════ */
+#hero-img {
+  position: relative;
+  width: 100%;
+  height: 100vh;   /* pantalla completa */
+  overflow: hidden;
+  background: #2a1f18;
+}
+
+.hero-img-wrap {
+  position: absolute; inset: 0;
+  overflow: hidden;
+}
+.hero-img-wrap img {
+  width: 100%; height: 120%;
+  object-fit: cover;
+  object-position: center 30%;
+  transform-origin: center center;
+  /* Ken Burns: zoom lento al cargar */
+  animation: kenBurns 20s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes kenBurns {
+  from { transform: scale(1.08) translateY(0); }
+  to   { transform: scale(1.0) translateY(-4%); }
+}
+
+/* Degradado oscuro encima para legibilidad */
+.hero-overlay {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom,
+      rgba(30,20,12,0.15) 0%,
+      rgba(30,20,12,0.0) 40%,
+      rgba(30,20,12,0.55) 80%,
+      rgba(30,20,12,0.8) 100%);
+  z-index: 2;
+}
+
+/* Texto del hero — emerge desde abajo */
+.hero-text {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  z-index: 3;
+  text-align: center;
+  padding: 0 30px 60px;
+  color: white;
+}
+.hero-text-inner {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1s ease 0.5s, transform 1s ease 0.5s;
+}
+.hero-text-inner.vis { opacity: 1; transform: none; }
+
+.hero-pre {
+  font-family: 'Cinzel', serif;
+  font-size: 9px; letter-spacing: 6px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 10px;
+}
+.hero-names {
+  font-family: 'Great Vibes', cursive;
+  font-size: 64px; line-height: 1;
+  color: white;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.4);
+  margin-bottom: 8px;
+}
+.hero-amp {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 36px;
+  color: var(--gold-light);
+  display: block; margin: -4px 0;
+}
+.hero-divider {
+  width: 80px; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.5), transparent);
+  margin: 14px auto;
+}
+.hero-date-text {
+  font-family: 'Cinzel', serif;
+  font-size: 10px; letter-spacing: 4px;
+  color: rgba(255,255,255,0.7);
+  text-transform: uppercase;
+}
+
+/* Indicador de scroll */
+.scroll-indicator {
+  position: absolute; bottom: 18px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  opacity: 0; animation: fadeInScroll 1s ease 2s forwards;
+}
+.scroll-indicator .si-line {
+  width: 1px; height: 30px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.5));
+  animation: lineGrow 1.5s ease-in-out infinite;
+}
+.scroll-indicator .si-text {
+  font-family: 'Cinzel', serif;
+  font-size: 7px; letter-spacing: 4px;
+  color: rgba(255,255,255,0.5); text-transform: uppercase;
+}
+@keyframes lineGrow {
+  0%,100% { transform: scaleY(1); opacity: 0.5; }
+  50%      { transform: scaleY(1.3); opacity: 1; }
+}
+@keyframes fadeInScroll {
+  to { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════
+   HERO — OLA SERPENTINA 3 FRANJAS
+   Cubre la imagen con 3 tiras negras que se
+   retiran en sentidos alternos al abrir.
+═══════════════════════════════════════════ */
+.hero-stripe {
+  position: absolute; left: 0; right: 0;
+  z-index: 6; pointer-events: none;
+  background: #1a1210; /* oscuro, como cortina de cine */
+  transform: translateX(0);
+}
+/* Alturas de cada franja */
+.hs1 { top: 0;      height: 36%; }
+.hs2 { top: 33%;    height: 34%; }
+.hs3 { top: 66%;    height: 36%; }
+
+/* Cuando el hero recibe .wave-open: las tiras se van */
+#hero-img.wave-open .hs1 {
+  animation: hstripeR 1.4s cubic-bezier(0.76,0,0.18,1) 0.1s forwards;
+}
+#hero-img.wave-open .hs2 {
+  animation: hstripeL 1.4s cubic-bezier(0.76,0,0.18,1) 1.0s forwards;
+}
+#hero-img.wave-open .hs3 {
+  animation: hstripeR 1.4s cubic-bezier(0.76,0,0.18,1) 1.9s forwards;
+}
+
+@keyframes hstripeR {
+  from { transform: translateX(0); }
+  to   { transform: translateX(102%); }
+}
+@keyframes hstripeL {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-102%); }
+}
+
+/* Destellos de luz que acompañan cada tira */
+.hero-sheen {
+  position: absolute; z-index: 7; pointer-events: none;
+  width: 80px; opacity: 0;
+  background: linear-gradient(to right,
+    transparent, rgba(255,255,255,0.35), transparent);
+}
+.hsh1 { top: 0;   height: 36%; }
+.hsh2 { top: 33%; height: 34%; }
+.hsh3 { top: 66%; height: 36%; }
+
+#hero-img.wave-open .hsh1 {
+  animation: hsheenR 1.4s ease 0.1s forwards;
+}
+#hero-img.wave-open .hsh2 {
+  animation: hsheenL 1.4s ease 1.0s forwards;
+}
+#hero-img.wave-open .hsh3 {
+  animation: hsheenR 1.4s ease 1.9s forwards;
+}
+@keyframes hsheenR {
+  0%   { opacity:1; left:-80px; }
+  100% { opacity:0; left:105%; }
+}
+@keyframes hsheenL {
+  0%   { opacity:1; right:-80px; left:auto; }
+  100% { opacity:0; right:105%; left:auto; }
+}
+
+/* ═══════════════════════════════════════════
+   SISTEMA DE SCROLL STORYTELLING
+═══════════════════════════════════════════ */
+.story-block {
+  position: relative;
+  padding: 70px 32px 60px;
+  min-height: 60vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 1;
+}
+
+/* ── EFECTO A: Caída desde esquina inferior-izquierda ── */
+.sb-item {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.sb-item.vis { opacity: 1; transform: none; }
+
+/* Delays escalonados para cada hijo */
+.sb-item:nth-child(1) { transition-delay: 0s; }
+.sb-item:nth-child(2) { transition-delay: 0.15s; }
+.sb-item:nth-child(3) { transition-delay: 0.3s; }
+.sb-item:nth-child(4) { transition-delay: 0.45s; }
+.sb-item:nth-child(5) { transition-delay: 0.6s; }
+.sb-item:nth-child(6) { transition-delay: 0.75s; }
+.sb-item:nth-child(7) { transition-delay: 0.9s; }
+
+/* ── EFECTO A: "caída" desde esquina inferior-izq con rotación ──
+   Uso: clase .fx-fall en el elemento                              */
+.fx-fall {
+  opacity: 0;
+  transform: translate(-40px, 60px) rotate(-6deg) scale(0.92);
+  transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1),
+              transform 0.9s cubic-bezier(0.22,1,0.36,1);
+}
+.fx-fall.vis { opacity: 1; transform: translate(0,0) rotate(0deg) scale(1); }
+
+/* ── EFECTO B: entrada desde la derecha con rebote ── */
+.fx-right {
+  opacity: 0;
+  transform: translateX(60px) scale(0.95);
+  transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1),
+              transform 0.8s cubic-bezier(0.22,1,0.36,1);
+}
+.fx-right.vis { opacity: 1; transform: translateX(0) scale(1); }
+
+/* ── EFECTO C: aparición con zoom desde el centro ── */
+.fx-zoom {
+  opacity: 0;
+  transform: scale(0.78);
+  transition: opacity 0.75s ease,
+              transform 0.75s cubic-bezier(0.34,1.56,0.64,1);
+}
+.fx-zoom.vis { opacity: 1; transform: scale(1); }
+
+/* ── EFECTO D: flip vertical (aparece desde arriba rotando) ── */
+.fx-flip {
+  opacity: 0;
+  transform: rotateX(40deg) translateY(-20px);
+  transform-origin: top center;
+  transition: opacity 0.7s ease,
+              transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  perspective: 600px;
+}
+.fx-flip.vis { opacity: 1; transform: rotateX(0deg) translateY(0); }
+
+/* Delays para fx- */
+.fx-d1 { transition-delay: 0s; }
+.fx-d2 { transition-delay: 0.18s; }
+.fx-d3 { transition-delay: 0.36s; }
+.fx-d4 { transition-delay: 0.54s; }
+.fx-d5 { transition-delay: 0.72s; }
+.fx-d6 { transition-delay: 0.90s; }
+.fx-d7 { transition-delay: 1.08s; }
+
+.sb-pre {
+  font-family: 'Cinzel', serif;
+  font-size: 8px; letter-spacing: 6px;
+  text-transform: uppercase; color: var(--gold);
+  text-align: center; margin-bottom: 10px;
+}
+.sb-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: 52px; color: var(--text);
+  text-align: center; line-height: 1.1;
+}
+.sb-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 20px;
+  color: var(--text); text-align: center;
+  line-height: 1.4; margin-top: 6px;
+}
+.sb-body {
+  font-size: 13px; font-weight: 300; line-height: 2;
+  text-align: center; color: var(--text-light);
+  max-width: 300px;
+}
+.sb-dato-grande {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 72px; font-weight: 300;
+  color: var(--gold); line-height: 1;
+  text-align: center;
+}
+.sb-dato-label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--text-light);
+  text-align: center; margin-top: 4px;
+}
+
+/* Separadores */
+.sep {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; padding: 0 30px; opacity: 0.4;
+  position: relative; z-index: 1;
+}
+.sep .l { flex: 1; height: 1px; background: linear-gradient(to right, transparent, var(--gold)); }
+.sep .r { flex: 1; height: 1px; background: linear-gradient(to left, transparent, var(--gold)); }
+.sep .ico { color: var(--gold); font-size: 14px; }
+
+/* ═══════════════════════════════════════════
+   BLOQUES ESPECÍFICOS
+═══════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════
+   FOTOS — TRES EFECTOS CINEMATOGRÁFICOS DISTINTOS
+════════════════════════════════════════════════ */
+.photo-panel {
+  position: relative; width: 100%;
+  overflow: hidden; z-index: 1;
+  background: #e8ddd5;
+}
+
+/* Marco dorado en todas */
+.photo-panel .p-border {
+  position: absolute; inset: 12px; z-index: 5;
+  border: 1px solid rgba(201,161,85,0.28);
+  pointer-events: none; opacity: 0;
+  transition: opacity 0.7s ease 1.2s;
+}
+.photo-panel.vis .p-border { opacity: 1; }
+
+/* Placeholder */
+.photo-panel .ph-wrap {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: linear-gradient(135deg,
+    rgba(255,182,170,0.12) 0%,
+    rgba(170,220,200,0.08) 50%,
+    rgba(170,200,230,0.12) 100%);
+  z-index: 1;
+}
+.photo-panel .ph-wrap .ph-ico { font-size: 34px; opacity: 0.25; }
+.photo-panel .ph-wrap .ph-txt {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 12px; color: var(--text-light); opacity: 0.4; margin-top: 8px;
+}
+
+/* ─────────────────────────────────────────────────────
+   FOTO 1 · OLA SERPENTINA EN 3 FRANJAS
+   
+   Técnica: 3 tiras de color crema cubren la imagen.
+   Se retiran una por una en sentidos alternos:
+     Tira 1 (top 0-38%):    izq → dcha  (delay 0s)
+     Tira 2 (mid 33-66%):   dcha → izq  (delay 1.1s)
+     Tira 3 (bot 60-100%):  izq → dcha  (delay 2.2s)
+   Cada retiro dura ~1.3s → total ~3.5s
+───────────────────────────────────────────────────── */
+.photo-panel.fx-wave-lr {
+  background: var(--cream); /* fondo visible mientras se anima */
+}
+.photo-panel.fx-wave-lr .img-clip {
+  position: absolute; inset: 0;
+  /* Sin clip-path: la imagen siempre está renderizada debajo */
+}
+.photo-panel.fx-wave-lr img {
+  position: absolute; inset: 0;
+  width: 100%; height: 115%;
+  object-fit: cover;
+  transform: translateY(4%) scale(1.06);
+  will-change: transform;
+  transition: none;
+}
+
+/* Las 3 tiras que CUBREN la imagen y se retiran */
+.photo-panel.fx-wave-lr .stripe {
+  position: absolute; left: 0; right: 0;
+  z-index: 3; pointer-events: none;
+  background: var(--cream);
+  transform: translateX(0%); /* cubren completamente */
+}
+.photo-panel.fx-wave-lr .s1 { top: 0;    height: 38%; }
+.photo-panel.fx-wave-lr .s2 { top: 33%;  height: 34%; }
+.photo-panel.fx-wave-lr .s3 { top: 66%;  height: 38%; }
+
+/* Cuando se activa .vis: cada tira se desliza hacia fuera */
+/* Tira 1 → sale por la derecha */
+.photo-panel.fx-wave-lr.vis .s1 {
+  animation: stripeRight 1.3s cubic-bezier(0.76,0,0.18,1) 0s forwards;
+}
+/* Tira 2 → sale por la izquierda */
+.photo-panel.fx-wave-lr.vis .s2 {
+  animation: stripeLeft  1.3s cubic-bezier(0.76,0,0.18,1) 1.1s forwards;
+}
+/* Tira 3 → sale por la derecha */
+.photo-panel.fx-wave-lr.vis .s3 {
+  animation: stripeRight 1.3s cubic-bezier(0.76,0,0.18,1) 2.2s forwards;
+}
+
+@keyframes stripeRight {
+  from { transform: translateX(0%); }
+  to   { transform: translateX(105%); }
+}
+@keyframes stripeLeft {
+  from { transform: translateX(0%); }
+  to   { transform: translateX(-105%); }
+}
+
+/* Destellos de luz que acompañan cada tira */
+.photo-panel.fx-wave-lr .sheen1,
+.photo-panel.fx-wave-lr .sheen2,
+.photo-panel.fx-wave-lr .sheen3 {
+  position: absolute; z-index: 4; pointer-events: none;
+  width: 70px;
+  background: linear-gradient(to right,
+    transparent, rgba(255,255,255,0.4), transparent);
+  opacity: 0;
+}
+.photo-panel.fx-wave-lr .sheen1 { top: 0;   height: 38%; }
+.photo-panel.fx-wave-lr .sheen2 { top: 33%; height: 34%; }
+.photo-panel.fx-wave-lr .sheen3 { top: 66%; height: 38%; }
+
+.photo-panel.fx-wave-lr.vis .sheen1 {
+  animation: sheenR 1.3s cubic-bezier(0.4,0,0.6,1) 0s forwards;
+}
+.photo-panel.fx-wave-lr.vis .sheen2 {
+  animation: sheenL 1.3s cubic-bezier(0.4,0,0.6,1) 1.1s forwards;
+}
+.photo-panel.fx-wave-lr.vis .sheen3 {
+  animation: sheenR 1.3s cubic-bezier(0.4,0,0.6,1) 2.2s forwards;
+}
+@keyframes sheenR {
+  0%   { opacity: 1; left: -70px; }
+  100% { opacity: 0; left: 105%; }
+}
+@keyframes sheenL {
+  0%   { opacity: 1; right: -70px; left: auto; }
+  100% { opacity: 0; right: 105%; left: auto; }
+}
+
+/* Borrar el wave-sheen original (no aplica aquí) */
+.photo-panel.fx-wave-lr .wave-sheen { display: none; }
+
+/* ─────────────────────────────────────────────────────
+   FOTO 2 · BORROSO → NÍTIDO (más lento: 3.5s)
+───────────────────────────────────────────────────── */
+.photo-panel.fx-blur img {
+  position: absolute; inset: 0;
+  width: 100%; height: 115%;
+  object-fit: cover;
+  filter: blur(22px) saturate(0.35) brightness(0.82);
+  transform: scale(1.14) translateY(4%);
+  transition: filter 3.5s cubic-bezier(0.4,0,0.2,1),
+              transform 3.5s cubic-bezier(0.4,0,0.2,1);
+  will-change: filter, transform;
+}
+.photo-panel.fx-blur.vis img {
+  filter: blur(0px) saturate(1) brightness(1);
+}
+.photo-panel.fx-blur .p-overlay {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(135deg,
+    rgba(255,210,195,0.65) 0%,
+    rgba(200,235,220,0.55) 45%,
+    rgba(200,218,245,0.55) 100%);
+  mix-blend-mode: soft-light;
+  opacity: 1;
+  transition: opacity 3.5s ease;
+}
+.photo-panel.fx-blur.vis .p-overlay { opacity: 0; }
+
+/* ─────────────────────────────────────────────────────
+   FOTO 3 · OLA ARRIBA → ABAJO (más lenta: 3.2s)
+───────────────────────────────────────────────────── */
+.photo-panel.fx-wave-tb .img-clip {
+  position: absolute; inset: 0;
+  clip-path: inset(0 0 100% 0 round 0px);
+  transition: clip-path 3.2s cubic-bezier(0.76,0,0.24,1);
+  will-change: clip-path;
+}
+.photo-panel.fx-wave-tb.vis .img-clip {
+  clip-path: inset(0 0 0% 0 round 0px);
+}
+.photo-panel.fx-wave-tb img {
+  position: absolute; inset: 0;
+  width: 100%; height: 115%;
+  object-fit: cover;
+  transform: translateY(4%) scale(1.06);
+  will-change: transform;
+  transition: none;
+}
+.photo-panel.fx-wave-tb .wave-sheen {
+  position: absolute; left: 0; right: 0; height: 70px;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(255,255,255,0.26) 50%,
+    transparent 100%);
+  z-index: 4; pointer-events: none;
+  top: -70px;
+  transition: top 3.2s cubic-bezier(0.76,0,0.24,1);
+}
+.photo-panel.fx-wave-tb.vis .wave-sheen { top: 108%; }
+
+/* Ocultar placeholder si hay imagen real */
+.photo-panel img ~ .ph-wrap { display: none; }
+.photo-panel.img-err img { display: none; }
+.photo-panel.img-err .ph-wrap { display: flex !important; }
+.photo-panel.img-err .p-overlay { display: none; }
+.photo-panel.img-err .img-clip { display: none; }
+.photo-panel.img-err .wave-sheen { display: none; }
+
+/* ── LUGAR ── */
+.lugar-card {
+  width: 100%;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 22px 20px;
+  border: 1px solid rgba(201,161,85,0.2);
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(201,161,85,0.08);
+  position: relative; overflow: hidden;
+}
+.lugar-card::before {
+  content: ''; position: absolute;
+  width: 130px; height: 110px;
+  top: -40px; right: -20px;
+  border-radius: 50%; filter: blur(22px); pointer-events: none;
+}
+.lc-1::before { background: rgba(255,182,170,0.3); }
+.lc-2::before { background: rgba(170,220,200,0.3); }
+.lc-title {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 24px; color: var(--text); margin-bottom: 4px;
+}
+.lc-time {
+  font-family: 'Cinzel', serif; font-size: 9px;
+  letter-spacing: 4px; color: var(--gold); margin-bottom: 10px;
+}
+.lc-addr { font-size: 13px; font-weight: 300; color: var(--text-light); line-height: 1.7; }
+.lc-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+.btn-maps {
+  display: inline-block; margin-top: 14px; padding: 8px 22px;
+  border: 1px solid var(--gold); border-radius: 30px;
+  font-size: 8px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text); text-decoration: none;
+  transition: all 0.3s; font-family: 'Cinzel', serif;
+}
+.btn-maps:hover { background: var(--gold); color: white; }
+
+/* ── TIMELINE ── */
+.tl-wrap { width: 100%; margin-top: 6px; position: relative; padding-left: 22px; }
+.tl-wrap::before {
+  content: ''; position: absolute;
+  left: 0; top: 8px; bottom: 8px; width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+}
+.tl-item {
+  display: flex; align-items: flex-start;
+  gap: 16px; margin-bottom: 28px;
+  opacity: 0; transform: translateX(-14px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.tl-item.vis { opacity: 1; transform: none; }
+.tl-dot {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1px solid var(--gold-light); background: var(--cream);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0; margin-left: -29px;
+  box-shadow: 0 0 0 3px var(--cream), 0 0 0 4px rgba(201,161,85,0.3);
+}
+.tl-content { flex: 1; padding-top: 3px; }
+.tl-hour { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 3px; color: var(--gold); margin-bottom: 2px; }
+.tl-event { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; color: var(--text); margin-bottom: 1px; }
+.tl-desc { font-size: 11px; font-weight: 200; color: var(--text-light); }
+
+/* ── VESTIMENTA ── */
+.dress-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+.dress-card {
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(8px);
+  border-radius: 10px; padding: 20px 12px;
+  text-align: center;
+  border: 1px solid rgba(201,161,85,0.2);
+}
+.dress-icon { font-size: 26px; margin-bottom: 8px; display: block; }
+.dress-who { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 3px; color: var(--gold); margin-bottom: 6px; }
+.dress-style { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; color: var(--text); line-height: 1.4; }
+
+.palette-row { display: flex; justify-content: center; gap: 10px; margin-top: 6px; }
+.cdot { width: 32px; height: 32px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.palette-note { font-size: 11px; font-weight: 200; color: var(--text-light); text-align: center; margin-top: 14px; }
+
+/* ── MENÚ ── */
+.menu-card {
+  width: 100%;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  border: 1px solid rgba(201,161,85,0.2);
+  padding: 26px 22px;
+  box-shadow: 0 4px 24px rgba(201,161,85,0.06);
+}
+.mcourse { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(201,161,85,0.12); }
+.mcourse:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.mcourse-label { font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 5px; color: var(--gold); margin-bottom: 8px; text-transform: uppercase; }
+.mcourse-item { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 17px; color: var(--text); margin-bottom: 2px; }
+.mcourse-sub { font-size: 11px; font-weight: 200; color: var(--text-light); }
+.alergias-box { margin-top: 18px; padding: 14px 16px; background: rgba(255,182,170,0.1); border-radius: 8px; border-left: 2px solid rgba(255,150,130,0.35); font-size: 12px; font-weight: 300; color: var(--text-light); line-height: 1.7; }
+
+/* ── CUENTA ATRÁS ── */
+.cd-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; }
+.cd-item {
+  text-align: center;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(8px);
+  border-radius: 8px; padding: 16px 6px;
+  border: 1px solid rgba(201,161,85,0.2);
+}
+.cd-num { font-family: 'Cormorant Garamond', serif; font-size: 36px; color: var(--gold); line-height: 1; }
+.cd-label { font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 2px; color: var(--text-light); margin-top: 4px; text-transform: uppercase; }
+
+/* ── RSVP ── */
+.asist-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-bottom: 16px; }
+.asist-btn {
+  padding: 14px 10px;
+  border: 1px solid rgba(201,161,85,0.25);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(8px);
+  cursor: pointer; text-align: center; transition: all 0.3s;
+  font-family: 'Jost', sans-serif;
+}
+.asist-btn .aico { font-size: 22px; display: block; margin-bottom: 5px; }
+.asist-btn .albl { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--text); }
+.asist-btn.sel-si { background: rgba(170,220,200,0.2); border-color: #8abd9c; }
+.asist-btn.sel-no { background: rgba(255,182,170,0.2); border-color: #d4906a; }
+
+.form-wrap { width: 100%; }
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 7px; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 12px 14px;
+  border: 1px solid rgba(201,161,85,0.3);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.7);
+  font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 300;
+  color: var(--text); outline: none; transition: border-color 0.3s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); background: white; }
+.form-group textarea { height: 80px; resize: none; }
+.btn-enviar {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+  border: none; border-radius: 8px; color: white;
+  font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 5px;
+  cursor: pointer; transition: all 0.3s; margin-top: 4px;
+}
+.btn-enviar:hover { opacity: 0.85; transform: translateY(-1px); }
+.rsvp-ok { display: none; text-align: center; padding: 30px 0; }
+.rsvp-ok .ok-icon { font-size: 48px; margin-bottom: 14px; }
+.rsvp-ok .ok-title { font-family: 'Great Vibes', cursive; font-size: 44px; color: var(--text); margin-bottom: 8px; }
+.rsvp-ok .ok-msg { font-size: 13px; font-weight: 200; color: var(--text-light); line-height: 1.8; }
+
+/* ── BANCO ── */
+.banco-box {
+  width: 100%;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  border: 1px solid rgba(201,161,85,0.2);
+  padding: 28px 22px; text-align: center;
+}
+.banco-icon { font-size: 28px; margin-bottom: 10px; }
+.banco-desc { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; color: var(--text-light); line-height: 1.8; margin-bottom: 18px; }
+.banco-iban { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 2px; color: var(--gold); background: var(--gold-pale); padding: 12px 18px; border-radius: 6px; display: inline-block; margin-bottom: 12px; }
+.banco-tit { font-size: 11px; font-weight: 200; color: var(--text-light); letter-spacing: 1px; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--text); padding: 55px 30px;
+  text-align: center; color: var(--cream);
+  position: relative; overflow: hidden; z-index: 1;
+}
+footer::before {
+  content: ''; position: absolute;
+  width: 280px; height: 220px; top: -60px; left: -50px;
+  border-radius: 50%;
+  background: rgba(201,161,85,0.07); filter: blur(35px);
+}
+.f-names { font-family: 'Great Vibes', cursive; font-size: 58px; color: var(--gold-light); position: relative; z-index: 1; }
+.f-date { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 5px; color: var(--gold); margin: 10px 0; position: relative; z-index: 1; }
+.f-phones { display: flex; justify-content: center; gap: 32px; margin-top: 22px; position: relative; z-index: 1; }
+.f-phone .ph-n { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; color: var(--gold-light); margin-bottom: 2px; }
+.f-phone .ph-t { font-size: 12px; font-weight: 200; color: rgba(255,255,255,0.55); letter-spacing: 1px; }
+.f-heart { font-size: 16px; color: var(--gold); opacity: 0.45; margin: 18px 0 8px; position: relative; z-index: 1; }
+.f-gracias { font-family: 'Great Vibes', cursive; font-size: 30px; color: var(--gold); opacity: 0.65; position: relative; z-index: 1; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+
+<audio id="wedding-audio" loop>
+  <source src="boda.mp3" type="audio/mpeg">
+</audio>
+
+<!-- ═══ MANCHAS ACUARELA DE FONDO (FIJAS) ═══ -->
+<!-- manchas acuarela integradas en cada bloque — ver más abajo -->
+
+<!-- ═══ BOTÓN MÚSICA ═══ -->
+<button id="music-btn" onclick="toggleMusic()" title="Música">
+  <span class="ico-note">♪</span>
+  <span class="ico-pause">⏸</span>
+</button>
+
+<!-- ═══ PORTADA ═══ -->
+<div id="portada">
+  <!-- Fondo acuarela portada -->
+  <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;">
+    <div style="position:absolute;width:260px;height:220px;top:-50px;right:-60px;background:radial-gradient(ellipse,rgba(255,182,170,0.3) 0%,transparent 70%);border-radius:60% 40% 70% 30%/50% 60% 40% 50%;filter:blur(20px);"></div>
+    <div style="position:absolute;width:230px;height:200px;bottom:-40px;left:-50px;background:radial-gradient(ellipse,rgba(170,220,200,0.28) 0%,transparent 70%);border-radius:40% 60% 30% 70%/60% 40% 60% 40%;filter:blur(18px);"></div>
+    <div style="position:absolute;width:190px;height:170px;bottom:120px;right:-30px;background:radial-gradient(ellipse,rgba(170,200,230,0.24) 0%,transparent 70%);border-radius:70% 30% 50% 50%/40% 60% 40% 60%;filter:blur(16px);"></div>
+    <div style="position:absolute;width:140px;height:120px;top:100px;left:-20px;background:radial-gradient(ellipse,rgba(210,185,225,0.2) 0%,transparent 70%);border-radius:50% 50% 40% 60%/60% 40% 60% 40%;filter:blur(14px);"></div>
+  </div>
+
+  <div class="portada-inner">
+    <!-- Corazón SVG -->
+    <svg style="width:55px;margin-bottom:22px;opacity:0.65;" viewBox="0 0 80 70" fill="none">
+      <path d="M40 62 C40 62 8 42 8 22 C8 12 15 5 24 5 C30 5 36 9 40 15 C44 9 50 5 56 5 C65 5 72 12 72 22 C72 42 40 62 40 62Z" stroke="#c9a155" stroke-width="1.2" fill="none"/>
+      <path d="M25 20 Q28 14 35 16" stroke="#c9a155" stroke-width="0.8" fill="none" opacity="0.5"/>
+      <path d="M38 3 Q40 0 42 3" stroke="#c9a155" stroke-width="0.8" fill="none"/>
+      <circle cx="40" cy="3" r="1.5" fill="#c9a155" opacity="0.6"/>
+    </svg>
+
+    <p class="portada-pre">Estáis invitados</p>
+
+    <!-- Monograma -->
+    <div class="monograma">
+      <!-- Fondo acuarela circular -->
+      <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(ellipse at 38% 52%,rgba(255,182,170,0.35) 0%,transparent 55%),radial-gradient(ellipse at 68% 38%,rgba(170,220,200,0.3) 0%,transparent 52%),radial-gradient(ellipse at 55% 70%,rgba(170,200,230,0.28) 0%,transparent 48%);filter:blur(3px);"></div>
+      <svg class="circle" viewBox="0 0 170 170">
+        <circle cx="85" cy="85" r="78" stroke="#c9a155" stroke-width="0.8" fill="none" opacity="0.4"/>
+        <circle cx="85" cy="85" r="74" stroke="#c9a155" stroke-width="0.3" fill="none" opacity="0.25"/>
+        <circle cx="85" cy="7"   r="2" fill="#c9a155" opacity="0.5"/>
+        <circle cx="85" cy="163" r="2" fill="#c9a155" opacity="0.5"/>
+        <circle cx="7"  cy="85"  r="2" fill="#c9a155" opacity="0.5"/>
+        <circle cx="163" cy="85" r="2" fill="#c9a155" opacity="0.5"/>
+        <!-- Pequeños adornos florales en los ejes -->
+        <path d="M85 7 Q88 11 85 15 Q82 11 85 7" fill="#c9a155" opacity="0.35"/>
+        <path d="M85 155 Q88 159 85 163 Q82 159 85 155" fill="#c9a155" opacity="0.35"/>
+      </svg>
+      <div class="monograma-letters">JM</div>
+      <div class="monograma-names">JUAN · MARTA</div>
+    </div>
+
+    <div class="portada-title">¡NOS CASAMOS!</div>
+    <div class="divider-gold"></div>
+    <div class="portada-date">Domingo, 11 de Octubre de 2026</div>
+
+    <button class="btn-abrir" onclick="abrirInvitacion()">
+      <span>✦ Ver invitación ✦</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══ CONTENIDO PRINCIPAL ═══ -->
+<div id="contenido">
+
+  <!-- ══════════════════════════════
+       IMAGEN HERO — pantalla completa
+       Ola serpentina en 3 franjas al abrir
+  ══════════════════════════════ -->
+  <section id="hero-img">
+    <div class="hero-img-wrap">
+      <img src="images/hero.jpeg" alt="Juan y Marta"
+        onerror="this.style.display='none';document.getElementById('hero-img').style.background='linear-gradient(160deg,rgba(255,182,170,0.4),rgba(170,220,200,0.3),rgba(170,200,230,0.4))'">
+    </div>
+    <div class="hero-overlay"></div>
+
+    <!-- 3 tiras oscuras que cubren el hero y se retiran en serpentina -->
+    <div class="hero-stripe hs1"></div>
+    <div class="hero-stripe hs2"></div>
+    <div class="hero-stripe hs3"></div>
+    <div class="hero-sheen hsh1"></div>
+    <div class="hero-sheen hsh2"></div>
+    <div class="hero-sheen hsh3"></div>
+
+    <div class="hero-text">
+      <div class="hero-text-inner" id="hero-text-inner">
+        <p class="hero-pre">Juan &amp; Marta</p>
+        <div class="hero-names">
+          Juan
+          <span class="hero-amp">&amp;</span>
+          Marta
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-date-text">11 · Octubre · 2026</div>
+      </div>
+    </div>
+
+    <div class="scroll-indicator">
+      <div class="si-line"></div>
+      <div class="si-text">desliza</div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════
+       BLOQUE 1 — El anuncio
+  ══════════════════════════════ -->
+  <div class="story-block">
+    <!-- Bloque 1 — blush/coral, centrado detrás del texto -->
+    <div class="wc-blob" style="transition-delay:0.15s">
+      <svg viewBox="0 0 390 360" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="b1s"><feGaussianBlur stdDeviation="7"/></filter>
+          <filter id="b1m"><feGaussianBlur stdDeviation="3.5"/></filter>
+        </defs>
+        <path d="M228,38 C272,18 338,42 355,95 C374,155 345,228 298,264 C255,298 188,308 145,282 C96,253 62,198 68,148 C74,94 110,55 162,42 C188,35 206,46 228,38Z" fill="rgba(255,128,105,0.22)" filter="url(#b1s)"/>
+        <path d="M215,68 C255,52 312,78 328,130 C345,186 318,252 272,278 C228,302 168,295 132,262 C92,227 82,172 102,128 C122,82 168,60 210,62 C212,62 213,70 215,68Z" fill="rgba(255,108,88,0.28)" filter="url(#b1m)"/>
+        <path d="M210,102 C242,88 282,108 295,148 C308,190 288,238 252,256 C218,272 175,264 155,236 C133,206 140,165 162,138 C178,118 188,114 210,102Z" fill="rgba(255,88,68,0.22)" filter="url(#b1m)"/>
+        <path d="M78,72 C92,55 118,65 112,88 C106,110 80,116 66,96 C54,78 64,88 78,72Z" fill="rgba(255,148,125,0.25)" filter="url(#b1s)"/>
+        <path d="M318,278 C334,260 360,270 355,295 C350,318 322,325 308,305 C296,287 304,295 318,278Z" fill="rgba(255,115,92,0.20)" filter="url(#b1s)"/>
+        <path d="M148,32 C156,22 170,27 167,40 C164,52 150,55 142,44 C136,34 141,41 148,32Z" fill="rgba(255,138,115,0.22)" filter="url(#b1m)"/>
+      </svg>
+    </div>
+    <div class="petals-wrap">
+      <div class="petal" style="left:10%;animation-duration:10s;animation-delay:0.5s"><svg width="11" height="14" viewBox="0 0 11 14"><path d="M5,1 C9,3 10,7 8,11 C6,14 1,13 1,9 C-1,5 2,1 5,1Z" fill="rgba(255,182,193,0.58)"/></svg></div>
+      <div class="petal" style="left:35%;animation-duration:8s;animation-delay:2s"><svg width="9" height="12" viewBox="0 0 9 12"><path d="M4,1 C7,2 8,5 6,9 C4,11 1,10 1,7 C-1,4 1,1 4,1Z" fill="rgba(201,161,85,0.50)"/></svg></div>
+      <div class="petal" style="left:62%;animation-duration:12s;animation-delay:0s"><svg width="12" height="15" viewBox="0 0 12 15"><path d="M6,1 C10,3 11,7 9,12 C7,15 2,14 1,10 C-1,5 2,1 6,1Z" fill="rgba(210,185,225,0.55)"/></svg></div>
+      <div class="petal" style="left:88%;animation-duration:9s;animation-delay:3s"><svg width="10" height="13" viewBox="0 0 10 13"><path d="M5,1 C8,2 9,6 7,10 C5,12 1,11 1,7 C-1,4 2,1 5,1Z" fill="rgba(170,220,200,0.52)"/></svg></div>
+    </div>
+    <div class="fx-zoom fx-d1 sb-pre">Una historia de amor</div>
+    <div class="fx-zoom fx-d2 sb-title">¡Nos casamos!</div>
+    <div class="divider-gold fx-zoom fx-d3" style="margin:16px auto;"></div>
+    <div class="fx-fall fx-d4 sb-body">
+      Con toda la ilusión del mundo queremos compartir este día tan especial contigo.<br><br>
+      Tu presencia es el mejor regalo que podríamos pedir.
+    </div>
+  </div>
+
+  <div class="sep"><div class="l"></div><span class="ico">✿</span><div class="r"></div></div>
+
+  <!-- ══════════════════════════════
+       BLOQUE 2 — La fecha (dato grande)
+  ══════════════════════════════ -->
+  <div class="story-block" style="min-height:50vh;">
+    <!-- Bloque 2 — menta+lavanda detrás del número 11 -->
+    <div class="wc-blob" style="transition-delay:0.3s">
+      <svg viewBox="0 0 390 420" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <defs><filter id="b2s"><feGaussianBlur stdDeviation="8"/></filter><filter id="b2m"><feGaussianBlur stdDeviation="4"/></filter></defs>
+        <path d="M178,28 C235,5 322,38 348,108 C376,182 348,278 288,318 C238,350 168,352 118,318 C62,280 40,208 62,148 C84,84 118,50 178,32 C180,31 176,29 178,28Z" fill="rgba(100,192,162,0.20)" filter="url(#b2s)"/>
+        <path d="M195,62 C248,44 318,82 335,152 C354,228 322,315 262,348 C210,376 142,368 100,326 C55,282 48,215 78,158 C108,98 155,68 192,62 C193,62 194,63 195,62Z" fill="rgba(145,135,208,0.24)" filter="url(#b2m)"/>
+        <path d="M198,108 C242,92 295,120 308,172 C322,228 298,288 252,308 C208,326 158,314 132,278 C104,240 112,192 145,162 C168,140 172,122 198,108Z" fill="rgba(82,180,150,0.22)" filter="url(#b2m)"/>
+        <path d="M52,128 C68,108 98,120 92,148 C86,174 56,182 40,158 C26,136 38,147 52,128Z" fill="rgba(100,192,162,0.20)" filter="url(#b2s)"/>
+        <path d="M328,315 C346,294 376,308 368,338 C360,366 328,372 314,348 C302,326 312,336 328,315Z" fill="rgba(145,135,208,0.17)" filter="url(#b2s)"/>
+      </svg>
+    </div>
+    <div class="petals-wrap">
+      <div class="petal" style="left:8%;animation-duration:11s;animation-delay:1s"><svg width="10" height="13" viewBox="0 0 10 13"><path d="M5,1 C8,2 9,6 7,10 C5,12 1,11 1,7 C-1,4 2,1 5,1Z" fill="rgba(170,220,200,0.55)"/></svg></div>
+      <div class="petal" style="left:42%;animation-duration:8.5s;animation-delay:0s"><svg width="11" height="14" viewBox="0 0 11 14"><path d="M5,1 C9,2 10,7 8,11 C6,14 1,13 1,9 C-1,5 2,1 5,1Z" fill="rgba(210,185,225,0.52)"/></svg></div>
+      <div class="petal" style="left:75%;animation-duration:13s;animation-delay:3.5s"><svg width="9" height="12" viewBox="0 0 9 12"><path d="M4,1 C7,2 8,5 6,9 C4,11 1,10 1,7 C-1,4 1,1 4,1Z" fill="rgba(201,161,85,0.48)"/></svg></div>
+    </div>
+    <div class="fx-zoom fx-d1 sb-pre">Rodéalo en el calendario</div>
+    <div class="fx-flip fx-d2 sb-dato-grande">11</div>
+    <div class="fx-flip fx-d3 sb-dato-label">Octubre · 2026</div>
+    <div class="fx-flip fx-d4" style="margin-top:10px;">
+      <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--text-light);">Domingo</span>
+    </div>
+  </div>
+
+  <!-- FOTO 1 · OLA SERPENTINA EN 3 FRANJAS -->
+  <div class="photo-panel fx-wave-lr" style="height:300px;">
+    <div class="img-clip">
+      <img src="images/hero.jpeg" alt="Juan y Marta"
+        onerror="this.closest('.photo-panel').classList.add('img-err')">
+    </div>
+    <!-- 3 tiras crema que se retiran en serpentina -->
+    <div class="stripe s1"></div>
+    <div class="stripe s2"></div>
+    <div class="stripe s3"></div>
+    <!-- destellos de luz que acompañan cada tira -->
+    <div class="sheen1"></div>
+    <div class="sheen2"></div>
+    <div class="sheen3"></div>
+    <div class="wave-sheen"></div>
+    <div class="p-border"></div>
+    <div class="ph-wrap"></div>
+  </div>
+
+  <div class="sep"><div class="l"></div><span class="ico">❀</span><div class="r"></div></div>
+
+  <!-- ══════════════════════════════
+       BLOQUE 3 — La ceremonia
+  ══════════════════════════════ -->
+  <div class="story-block">
+    <!-- Bloque 3 — azul/lavanda apagado -->
+    <div class="wc-blob" style="transition-delay:0.2s">
+      <svg viewBox="0 0 390 420" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <defs><filter id="b3s"><feGaussianBlur stdDeviation="8"/></filter><filter id="b3m"><feGaussianBlur stdDeviation="4"/></filter></defs>
+        <path d="M195,32 C255,8 345,48 362,125 C382,210 348,308 278,342 C218,370 145,362 95,318 C38,270 22,192 50,128 C78,60 130,30 192,28 C193,28 194,33 195,32Z" fill="rgba(112,158,218,0.20)" filter="url(#b3s)"/>
+        <path d="M202,70 C255,52 325,95 342,168 C362,250 325,342 262,372 C208,396 138,385 92,338 C42,288 35,218 68,162 C100,102 152,72 200,68 C201,68 202,71 202,70Z" fill="rgba(155,138,212,0.24)" filter="url(#b3m)"/>
+        <path d="M200,118 C245,102 298,132 312,185 C328,245 302,305 255,325 C210,343 158,330 132,295 C104,258 115,205 148,172 C170,148 172,132 200,118Z" fill="rgba(92,148,215,0.20)" filter="url(#b3m)"/>
+        <path d="M55,102 C72,80 105,93 99,124 C93,153 60,162 44,138 C30,115 40,123 55,102Z" fill="rgba(112,158,218,0.18)" filter="url(#b3s)"/>
+        <path d="M318,302 C338,278 372,294 364,325 C356,355 322,362 308,336 C295,312 301,325 318,302Z" fill="rgba(155,138,212,0.15)" filter="url(#b3s)"/>
+        <path d="M325,70 C340,52 366,62 360,88 C354,112 328,120 315,98 C304,78 312,86 325,70Z" fill="rgba(112,158,218,0.16)" filter="url(#b3s)"/>
+      </svg>
+    </div>
+    <div class="petals-wrap">
+      <div class="petal" style="left:5%;animation-duration:9.5s;animation-delay:0.2s"><svg width="12" height="15" viewBox="0 0 12 15"><path d="M6,1 C10,2 11,7 9,11 C7,14 2,13 1,9 C-1,5 2,1 6,1Z" fill="rgba(255,182,193,0.55)"/></svg></div>
+      <div class="petal" style="left:55%;animation-duration:7s;animation-delay:1.8s"><svg width="10" height="13" viewBox="0 0 10 13"><path d="M5,1 C8,2 9,6 7,10 C5,12 1,11 1,7 C-1,4 2,1 5,1Z" fill="rgba(201,161,85,0.50)"/></svg></div>
+      <div class="petal" style="left:82%;animation-duration:11s;animation-delay:4s"><svg width="11" height="14" viewBox="0 0 11 14"><path d="M5,1 C9,2 10,7 8,11 C6,14 1,13 1,9 C-1,5 2,1 5,1Z" fill="rgba(170,220,200,0.52)"/></svg></div>
+    </div>
+    <div class="fx-zoom fx-d1 sb-pre">Primero lo primero</div>
+    <div class="fx-zoom fx-d2 sb-title">La ceremonia</div>
+    <div class="divider-gold fx-zoom fx-d3" style="margin:14px auto;"></div>
+    <div class="fx-fall fx-d4 lugar-card lc-1">
+      <span class="lc-icon">⛪</span>
+      <div class="lc-time">12:30 H</div>
+      <div class="lc-title">Iglesia San Juan Bautista</div>
+      <div class="lc-addr">Archena, Murcia</div>
+      <a class="btn-maps" href="https://maps.google.com/?q=Iglesia+San+Juan+Bautista+Archena+Murcia" target="_blank">↗ Ver en Maps</a>
+    </div>
+  </div>
+
+  <div class="sep"><div class="l"></div><span class="ico">✦</span><div class="r"></div></div>
+
+  <!-- ══════════════════════════════
+       BLOQUE 4 — La celebración
+  ══════════════════════════════ -->
+  <div class="story-block">
+    <!-- Bloque 4 — menta/lavanda CENTRADA en el bloque -->
+    <div class="wc-blob" style="transition-delay:0.15s">
+      <svg viewBox="0 0 390 420" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <defs><filter id="b4s"><feGaussianBlur stdDeviation="8"/></filter><filter id="b4m"><feGaussianBlur stdDeviation="4"/></filter></defs>
+        <path d="M192,28 C252,5 342,48 360,128 C380,218 345,318 275,352 C215,380 142,368 92,322 C35,272 20,194 50,132 C80,66 130,34 190,28 C191,27 192,29 192,28Z" fill="rgba(95,185,155,0.20)" filter="url(#b4s)"/>
+        <path d="M200,68 C255,50 328,96 345,172 C364,258 328,352 265,382 C210,406 138,394 90,346 C38,294 30,222 65,164 C100,104 155,72 198,66 C199,66 199,69 200,68Z" fill="rgba(148,138,208,0.22)" filter="url(#b4m)"/>
+        <path d="M198,118 C244,102 300,135 315,190 C332,252 305,315 258,336 C213,355 160,340 133,304 C104,266 114,212 148,178 C172,152 172,132 198,118Z" fill="rgba(78,175,145,0.20)" filter="url(#b4m)"/>
+        <path d="M52,138 C70,115 105,128 98,160 C91,190 56,200 40,172 C26,148 36,160 52,138Z" fill="rgba(95,185,155,0.18)" filter="url(#b4s)"/>
+        <path d="M322,332 C342,308 376,325 368,358 C360,388 325,395 310,368 C297,344 305,355 322,332Z" fill="rgba(148,138,208,0.15)" filter="url(#b4s)"/>
+        <path d="M330,78 C346,58 372,70 366,98 C360,124 332,132 318,108 C305,86 316,96 330,78Z" fill="rgba(95,185,155,0.16)" filter="url(#b4s)"/>
+      </svg>
+    </div>
+    <div class="petals-wrap">
+      <div class="petal" style="left:18%;animation-duration:8s;animation-delay:0.8s"><svg width="11" height="14" viewBox="0 0 11 14"><path d="M5,1 C9,3 10,7 8,11 C6,14 1,13 1,9 C-1,5 2,1 5,1Z" fill="rgba(255,182,193,0.56)"/></svg></div>
+      <div class="petal" style="left:50%;animation-duration:10.5s;animation-delay:2.8s"><svg width="13" height="17" viewBox="0 0 13 17"><path d="M6,1 C11,3 12,8 10,13 C8,17 2,16 1,11 C-1,6 2,1 6,1Z" fill="rgba(201,161,85,0.50)"/></svg></div>
+      <div class="petal" style="left:78%;animation-duration:9s;animation-delay:0s"><svg width="10" height="13" viewBox="0 0 10 13"><path d="M5,1 C8,2 9,6 7,10 C5,12 1,11 1,7 C-1,4 2,1 5,1Z" fill="rgba(210,185,225,0.54)"/></svg></div>
+    </div>
+    <div class="fx-zoom fx-d1 sb-pre">Y después...</div>
+    <div class="fx-zoom fx-d2 sb-title">La celebración</div>
+    <div class="divider-gold fx-zoom fx-d3" style="margin:14px auto;"></div>
+    <div class="fx-right fx-d4 lugar-card lc-2">
+      <span class="lc-icon">🥂</span>
+      <div class="lc-time">14:00 H</div>
+      <div class="lc-title">Salón Molina Real</div>
+      <div class="lc-addr">Molina de Segura, Murcia</div>
+      <a class="btn-maps" href="https://maps.google.com/?q=Salon+Molina+Real+Molina+de+Segura+Murcia" target="_blank">↗ Ver en Maps</a>
+    </div>
+  </div>
+
+  <!-- FOTO 2 · BORROSO → NÍTIDO -->
+  <div class="photo-panel fx-blur" style="height:260px;">
+    <img src="images/ceremonia.jpeg" alt="Ceremonia"
+      onerror="this.closest('.photo-panel').classList.add('img-err')">
+    <div class="p-overlay"></div>
+    <div class="p-border"></div>
+    <div class="ph-wrap">
+      <span class="ph-ico">📷</span>
+      <span class="ph-txt">images/ceremonia.jpeg</span>
+    </div>
+  </div>
+
+  <div class="sep"><div class="l"></div><span class="ico">✿</span><div class="r"></div></div>
+
+  <!-- ══════════════════════════════
+       BLOQUE 5 — Programa del día
+  ══════════════════════════════ -->
+  <div class="story-block">
+    <div class="wc-blob" style="transition-delay:0.2s">
+      <svg viewBox="0 0 390 700" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><filter id="b5f1"><feGaussianBlur stdDeviation="9"/></filter><filter id="b5f2"><feGaussianBlur stdDeviation="4.5"/></filter></defs>
+        <path d="M195,80 C258,55 348,95 368,178 C390,270 352,375 282,415
+                 C222,448 145,442 92,400 C32,355 15,270 38,195
+                 C62,115 118,72 178,65 C186,64 190,82 195,80Z"
+              fill="rgba(132,172,228,0.19)" filter="url(#b5f1)"/>
+        <path d="M200,115 C255,98 322,135 338,202 C356,278 322,365 260,398
+                 C205,428 132,420 88,378 C40,334 30,268 58,205
+                 C85,138 142,108 198,105 C200,105 200,117 200,115Z"
+              fill="rgba(175,148,218,0.22)" filter="url(#b5f2)"/>
+        <path d="M200,158 C248,142 302,172 315,228 C330,292 300,352 252,372
+                 C208,390 152,376 125,340 C96,302 104,248 135,212
+                 C158,182 162,172 200,158Z"
+              fill="rgba(108,158,222,0.20)" filter="url(#b5f2)"/>
+        <path d="M75,168 C95,145 128,158 122,188 C116,216 82,224 65,200
+                 C50,178 56,190 75,168Z"
+              fill="rgba(132,172,228,0.18)" filter="url(#b5f1)"/>
+        <path d="M325,390 C345,368 375,382 368,410 C361,436 328,440 315,416
+                 C304,395 308,410 325,390Z"
+              fill="rgba(175,148,218,0.15)" filter="url(#b5f1)"/>
+        <path d="M348,128 C364,108 390,120 384,148 C378,174 348,180 335,158
+                 C323,138 334,147 348,128Z"
+              fill="rgba(132,172,228,0.14)" filter="url(#b5f1)"/>
+      </svg>
+    </div>
+    <!-- pétalos sutiles -->
+    <div class="petals-wrap">
+      <div class="petal" style="left:8%;animation-duration:8s;animation-delay:0s"><svg width="12" height="15" viewBox="0 0 12 15"><path d="M6,1 C10,2 12,7 10,11 C8,15 2,14 1,10 C-1,5 2,1 6,1Z" fill="rgba(255,182,193,0.60)"/></svg></div>
+      <div class="petal" style="left:28%;animation-duration:11s;animation-delay:2.5s"><svg width="10" height="13" viewBox="0 0 10 13"><path d="M5,1 C8,2 9,6 7,10 C5,12 1,11 1,7 C-1,4 2,1 5,1Z" fill="rgba(201,161,85,0.50)"/></svg></div>
+      <div class="petal" style="left:55%;animation-duration:7s;animation-delay:1s"><svg width="11" height="14" viewBox="0 0 11 14"><path d="M5,1 C9,2 10,7 8,11 C6,14 1,13 1,9 C-1,5 2,1 5,1Z" fill="rgba(170,220,200,0.58)"/></svg></div>
+      <div class="petal" style="left:76%;animation-duration:9.5s;animation-delay:3.8s"><svg width="9" height="12" viewBox="0 0 9 12"><path d="M4,1 C7,2 8,5 6,9 C4,11 1,10 1,7 C-1,4 1,1 4,1Z" fill="rgba(210,185,225,0.55)"/></svg></div>
+      <div class="petal" style="left:44%;animation-duration:12s;animation-delay:5s"><svg width="13" height="17" viewBox="0 0 13 17"><path d="M6,1 C11,2 13,8 10,13 C8,17 2,16 1,11 C-1,6 2,1 6,1Z" fill="rgba(255,182,193,0.50)"/></svg></div>
+      <div class="petal" style="left:90%;animation-duration:8.5s;animation-delay:1.8s"><svg width="10" height="13" viewBox="0 0 10 13"><path d="M5,1 C8,2 9,6 7,10 C5,12 1,11 1,7 C-1,4 2,1 5,1Z" fill="rgba(201,161,85,0.45)"/></svg></div>
+    </div>
+    <div class="fx-zoom fx-d1 sb-pre">El programa</div>
+    <div class="fx-zoom fx-d2 sb-title">Nuestro día</div>
+    <div class="divider-gold fx-zoom fx-d3" style="margin:14px auto;"></div>
+    <div class="tl-wrap">
+      <div class="tl-item"><div class="tl-dot">💍</div><div class="tl-content"><div class="tl-hour">11:30 H</div><div class="tl-event">Llegada de invitados</div><div class="tl-desc">Iglesia San Juan Bautista</div></div></div>
+      <div class="tl-item"><div class="tl-dot">⛪</div><div class="tl-content"><div class="tl-hour">12:30 H</div><div class="tl-event">Ceremonia religiosa</div><div class="tl-desc">¡El gran momento!</div></div></div>
+      <div class="tl-item"><div class="tl-dot">🥂</div><div class="tl-content"><div class="tl-hour">14:00 H</div><div class="tl-event">Cóctel de bienvenida</div><div class="tl-desc">Salón Molina Real</div></div></div>
+      <div class="tl-item"><div class="tl-dot">🍽️</div><div class="tl-content"><div class="tl-hour">16:00 H</div><div class="tl-event">Banquete nupcial</div><div class="tl-desc">Mesa compartida con vosotros</div></div></div>
+      <div class="tl-item"><div class="tl-dot">🎂</div><div class="tl-content"><div class="tl-hour">19:00 H</div><div class="tl-event">Tarta nupcial</div><div class="tl-desc">El dulce momento</div></div></div>
+      <div class="tl-item"><div class="tl-dot">💃</div><div class="tl-content"><div class="tl-hour">20:00 H</div><div class="tl-event">Fiesta y baile</div><div class="tl-desc">¡Hasta las 01:00!</div></div></div>
+      <div class="tl-item"><div class="tl-dot">🚗</div><div class="tl-content"><div class="tl-hour">01:00 H</div><div class="tl-event">Nos despedimos</div><div class="tl-desc">¡Hasta la próxima!</div></div></div>
+    </div>
+  </div>
+
+  <div class="sep"><div class="l"></div><span class="ico">❀</span><div class="r"></div></div>
+
+  <!-- ══════════════════════════════
+       BLOQUE 6 — Vestimenta
+  ══════════════════════════════ -->
+  <div class="story-block">
+    <div class="wc-blob" style="transition-delay:0.25s">
+      <svg viewBox="0 0 390 500" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><filter id="b6f1"><feGaussianBlur stdDeviation="8"/></filter><filter id="b6f2"><feGaussianBlur stdDeviation="4"/></filter></defs>
+        <path d="M198,55 C262,32 352,72 370,155 C390,248 348,348 278,382
+                 C218,410 142,402 90,358 C32,310 15,228 42,158
+                 C68,84 132,52 192,50 C194,50 197,57 198,55Z"
+              fill="rgba(228,195,138,0.20)" filter="url(#b6f1)"/>
+        <path d="M204,88 C260,70 328,112 344,185 C362,268 324,358 260,388
+                 C204,414 132,404 88,360 C40,314 32,245 62,180
+                 C92,112 150,80 204,78 C205,78 204,90 204,88Z"
+              fill="rgba(255,158,118,0.22)" filter="url(#b6f2)"/>
+        <path d="M200,128 C248,112 300,142 314,196 C330,258 302,314 255,334
+                 C210,352 158,338 132,302 C104,264 112,212 142,178
+                 C164,152 164,142 200,128Z"
+              fill="rgba(215,182,118,0.20)" filter="url(#b6f2)"/>
+        <path d="M62,158 C82,135 115,148 110,178 C105,205 70,212 55,188
+                 C42,166 45,178 62,158Z"
+              fill="rgba(228,195,138,0.18)" filter="url(#b6f1)"/>
+        <path d="M330,348 C350,325 380,340 372,368 C364,395 332,400 318,375
+                 C306,354 312,368 330,348Z"
+              fill="rgba(255,158,118,0.15)" filter="url(#b6f1)"/>
+        <path d="M348,95 C364,75 388,88 382,115 C376,140 348,146 335,122
+                 C324,100 334,113 348,95Z"
+              fill="rgba(228,195,138,0.15)" filter="url(#b6f1)"/>
+      </svg>
+    </div>
+    <div class="petals-wrap">
+      <div class="petal" style="left:15%;animation-duration:9s;animation-delay:0.4s"><svg width="13" height="17" viewBox="0 0 13 17"><path d="M6,1 C11,3 12,8 10,13 C8,17 2,16 1,11 C-1,6 2,1 6,1Z" fill="rgba(201,161,85,0.52)"/></svg></div>
+      <div class="petal" style="left:40%;animation-duration:7.5s;animation-delay:2s"><svg width="11" height="14" viewBox="0 0 11 14"><path d="M5,1 C9,2 10,7 8,11 C6,14 1,13 1,9 C-1,5 2,1 5,1Z" fill="rgba(255,182,193,0.58)"/></svg></div>
+      <div class="petal" style="left:68%;animation-duration:10s;animation-delay:0s"><svg width="12" height="16" viewBox="0 0 12 16"><path d="M6,1 C10,3 11,8 9,12 C7,15 2,14 1,10 C-1,5 2,1 6,1Z" fill="rgba(210,185,225,0.55)"/></svg></div>
+      <div class="petal" style="left:85%;animation-duration:8s;animation-delay:3.2s"><svg width="10" height="13" viewBox="0 0 10 13"><path d="M5,1 C8,2 9,6 7,10 C5,12 1,11 1,7 C-1,4 2,1 5,1Z" fill="rgba(170,220,200,0.52)"/></svg></div>
+      <div class="petal" style="left:5%;animation-duration:12s;animation-delay:1.5s"><svg width="9" height="12" viewBox="0 0 9 12"><path d="M4,1 C7,2 8,5 6,9 C4,11 1,10 1,7 C-1,4 1,1 4,1Z" fill="rgba(255,182,193,0.50)"/></svg></div>
+    </div>
+    <div class="fx-zoom fx-d1 sb-pre">Código de vestimenta</div>
+    <div class="fx-zoom fx-d2 sb-title">Elegancia</div>
+    <div class="divider-gold fx-zoom fx-d3" style="margin:14px auto;"></div>
+    <div class="fx-zoom fx-d4 sb-body" style="margin-bottom:20px;">
+      Nos encantaría veros elegantes<br>en este día tan especial.
+    </div>
+    <div class="dress-grid fx-fall fx-d5">
+      <div class="dress-card"><span class="dress-icon">🤵</span><div class="dress-who">ELLOS</div><div class="dress-style">Traje o<br>esmoquin</div></div>
+      <div class="dress-card"><span class="dress-icon">👗</span><div class="dress-who">ELLAS</div><div class="dress-style">Vestido largo<br>o midi</div></div>
+    </div>
+    <div class="fx-zoom fx-d6" style="margin-top:24px;width:100%;">
+      <div class="palette-row">
+        <div class="cdot" style="background:#e8d5b0;" title="Champán"></div>
+        <div class="cdot" style="background:#c9a155;" title="Dorado"></div>
+        <div class="cdot" style="background:#c8d4b0;" title="Salvia"></div>
+        <div class="cdot" style="background:#b0c4d8;" title="Azul"></div>
+        <div class="cdot" style="background:#d4c0c8;" title="Rosa"></div>
+      </div>
+      <p class="palette-note">Evitar blanco y negro riguroso, por favor.</p>
+    </div>
+  </div>
+
+  <!-- FOTO 3 · OLA ARRIBA → ABAJO -->
+  <div class="photo-panel fx-wave-tb" style="height:240px;">
+    <div class="img-clip">
+      <img src="images/celebracion.jpeg" alt="Celebración"
+        onerror="this.closest('.photo-panel').classList.add('img-err')">
+    </div>
+    <div class="wave-sheen"></div>
+    <div class="p-border"></div>
+    <div class="ph-wrap">
+      <span class="ph-ico">📷</span>
+      <span class="ph-txt">images/celebracion.jpeg</span>
+    </div>
+  </div>
+
+  <div class="sep"><div class="l"></div><span class="ico">✦</span><div class="r"></div></div>
+
+  <!-- ══════════════════════════════
+       BLOQUE 7 — Menú
+  ══════════════════════════════ -->
+  <div class="story-block">
+    <div class="wc-blob" style="transition-delay:0.2s">
+      <svg viewBox="0 0 390 580" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><filter id="b7f1"><feGaussianBlur stdDeviation="9"/></filter><filter id="b7f2"><feGaussianBlur stdDeviation="4.5"/></filter></defs>
+        <path d="M192,65 C255,42 342,82 362,168 C384,265 342,372 272,408
+                 C212,438 135,428 82,382 C22,332 8,248 35,175
+                 C62,98 120,62 182,58 C186,57 190,67 192,65Z"
+              fill="rgba(115,205,178,0.19)" filter="url(#b7f1)"/>
+        <path d="M198,98 C254,80 322,120 338,198 C356,285 315,378 250,410
+                 C194,438 120,428 76,382 C28,334 22,262 52,195
+                 C82,124 142,92 198,88 C199,88 198,100 198,98Z"
+              fill="rgba(132,172,228,0.22)" filter="url(#b7f2)"/>
+        <path d="M195,142 C244,125 298,158 312,215 C328,280 298,340 250,360
+                 C205,378 152,362 126,324 C98,284 108,232 138,198
+                 C160,172 162,158 195,142Z"
+              fill="rgba(98,195,165,0.20)" filter="url(#b7f2)"/>
+        <path d="M58,192 C78,168 112,182 106,212 C100,240 64,248 48,222
+                 C34,198 40,214 58,192Z"
+              fill="rgba(115,205,178,0.17)" filter="url(#b7f1)"/>
+        <path d="M330,375 C350,352 382,365 374,394 C366,421 332,426 318,400
+                 C307,378 312,395 330,375Z"
+              fill="rgba(132,172,228,0.14)" filter="url(#b7f1)"/>
+        <path d="M55,398 C72,376 100,390 95,418 C90,444 58,450 44,426
+                 C32,404 40,418 55,398Z"
+              fill="rgba(115,205,178,0.13)" filter="url(#b7f1)"/>
+      </svg>
+    </div>
+    <div class="petals-wrap">
+      <div class="petal" style="left:20%;animation-duration:8s;animation-delay:0.2s"><svg width="11" height="14" viewBox="0 0 11 14"><path d="M5,1 C9,2 10,7 8,11 C6,14 1,13 1,9 C-1,5 2,1 5,1Z" fill="rgba(255,182,193,0.58)"/></svg></div>
+      <div class="petal" style="left:58%;animation-duration:9.5s;animation-delay:2.8s"><svg width="13" height="17" viewBox="0 0 13 17"><path d="M6,1 C11,3 12,8 10,13 C8,17 2,16 1,11 C-1,6 2,1 6,1Z" fill="rgba(201,161,85,0.48)"/></svg></div>
+      <div class="petal" style="left:82%;animation-duration:7s;animation-delay:1.2s"><svg width="10" height="13" viewBox="0 0 10 13"><path d="M5,1 C8,2 9,6 7,10 C5,12 1,11 1,7 C-1,4 2,1 5,1Z" fill="rgba(170,220,200,0.54)"/></svg></div>
+      <div class="petal" style="left:6%;animation-duration:11s;animation-delay:4s"><svg width="12" height="16" viewBox="0 0 12 16"><path d="M6,1 C10,3 11,8 9,12 C7,15 2,14 1,10 C-1,5 2,1 6,1Z" fill="rgba(210,185,225,0.52)"/></svg></div>
+      <div class="petal" style="left:42%;animation-duration:8.5s;animation-delay:6s"><svg width="9" height="12" viewBox="0 0 9 12"><path d="M4,1 C7,2 8,5 6,9 C4,11 1,10 1,7 C-1,4 1,1 4,1Z" fill="rgba(255,182,193,0.52)"/></svg></div>
+    </div>
+    <div class="fx-zoom fx-d1 sb-pre">El menú</div>
+    <div class="fx-zoom fx-d2 sb-title">A la mesa</div>
+    <div class="divider-gold fx-zoom fx-d3" style="margin:14px auto;"></div>
+    <div class="menu-card fx-fall fx-d4">
+      <div class="mcourse"><div class="mcourse-label">Entrantes</div><div class="mcourse-item">Jamón ibérico y embutidos</div><div class="mcourse-sub">Con pan de cristal y tomate</div><div class="mcourse-item" style="margin-top:10px;">Croquetas caseras</div><div class="mcourse-sub">Receta de la abuela</div></div>
+      <div class="mcourse"><div class="mcourse-label">Primer plato</div><div class="mcourse-item">Arroz caldero murciano</div><div class="mcourse-sub">Con gamba roja y ñora</div></div>
+      <div class="mcourse"><div class="mcourse-label">Segundo plato</div><div class="mcourse-item">Solomillo de ternera</div><div class="mcourse-sub">Con reducción de vino y patata trufada</div></div>
+      <div class="mcourse"><div class="mcourse-label">Postre</div><div class="mcourse-item">Tarta nupcial</div><div class="mcourse-sub">Surtido de dulces murcianos</div></div>
+      <div class="alergias-box">🌿 Si tienes alguna alergia, indícalo en el formulario. Adaptaremos el menú para todos.</div>
+    </div>
+  </div>
+
+  <div class="sep"><div class="l"></div><span class="ico">✿</span><div class="r"></div></div>
+
+  <!-- ══════════════════════════════
+       BLOQUE 8 — Cuenta atrás
+  ══════════════════════════════ -->
+  <div class="story-block" style="min-height:50vh;">
+    <div class="wc-blob" style="transition-delay:0.3s">
+      <svg viewBox="0 0 390 500" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><filter id="b8f1"><feGaussianBlur stdDeviation="9"/></filter><filter id="b8f2"><feGaussianBlur stdDeviation="4.5"/></filter></defs>
+        <path d="M200,58 C262,35 355,78 372,165 C392,262 348,368 278,400
+                 C217,428 140,415 88,368 C28,317 12,232 42,162
+                 C72,88 135,52 195,50 C197,50 199,60 200,58Z"
+              fill="rgba(255,148,125,0.19)" filter="url(#b8f1)"/>
+        <path d="M206,92 C262,72 332,115 348,192 C366,278 325,370 260,400
+                 C202,426 128,415 82,368 C33,318 25,246 58,182
+                 C92,114 152,82 205,80 C206,80 205,94 206,92Z"
+              fill="rgba(178,148,215,0.22)" filter="url(#b8f2)"/>
+        <path d="M202,135 C250,118 305,152 318,208 C333,272 303,332 255,352
+                 C210,370 155,354 128,318 C100,280 110,228 142,195
+                 C166,168 168,150 202,135Z"
+              fill="rgba(242,128,108,0.20)" filter="url(#b8f2)"/>
+        <path d="M62,168 C82,144 118,158 112,190 C106,220 68,228 52,202
+                 C38,178 44,192 62,168Z"
+              fill="rgba(255,148,125,0.17)" filter="url(#b8f1)"/>
+        <path d="M335,355 C355,332 385,347 378,375 C371,402 338,408 325,382
+                 C314,360 318,375 335,355Z"
+              fill="rgba(178,148,215,0.14)" filter="url(#b8f1)"/>
+      </svg>
+    </div>
+    <div class="petals-wrap">
+      <div class="petal" style="left:12%;animation-duration:9s;animation-delay:0s"><svg width="12" height="16" viewBox="0 0 12 16"><path d="M6,1 C10,3 11,8 9,12 C7,15 2,14 1,10 C-1,5 2,1 6,1Z" fill="rgba(255,182,193,0.60)"/></svg></div>
+      <div class="petal" style="left:48%;animation-duration:7.5s;animation-delay:2.2s"><svg width="11" height="14" viewBox="0 0 11 14"><path d="M5,1 C9,2 10,7 8,11 C6,14 1,13 1,9 C-1,5 2,1 5,1Z" fill="rgba(201,161,85,0.50)"/></svg></div>
+      <div class="petal" style="left:72%;animation-duration:10s;animation-delay:1s"><svg width="13" height="17" viewBox="0 0 13 17"><path d="M6,1 C11,3 12,8 10,13 C8,17 2,16 1,11 C-1,6 2,1 6,1Z" fill="rgba(210,185,225,0.55)"/></svg></div>
+      <div class="petal" style="left:92%;animation-duration:8s;animation-delay:3.5s"><svg width="9" height="12" viewBox="0 0 9 12"><path d="M4,1 C7,2 8,5 6,9 C4,11 1,10 1,7 C-1,4 1,1 4,1Z" fill="rgba(170,220,200,0.54)"/></svg></div>
+    </div>
+    <div class="fx-zoom fx-d1 sb-pre">Faltan...</div>
+    <div class="fx-zoom fx-d2 sb-title" style="font-size:42px;">¡Ya queda poco!</div>
+    <div class="divider-gold fx-zoom fx-d3" style="margin:14px auto;"></div>
+    <div class="cd-grid fx-flip fx-d4">
+      <div class="cd-item"><div class="cd-num" id="cd-dias">--</div><div class="cd-label">Días</div></div>
+      <div class="cd-item"><div class="cd-num" id="cd-horas">--</div><div class="cd-label">Horas</div></div>
+      <div class="cd-item"><div class="cd-num" id="cd-min">--</div><div class="cd-label">Min</div></div>
+      <div class="cd-item"><div class="cd-num" id="cd-seg">--</div><div class="cd-label">Seg</div></div>
+    </div>
+  </div>
+
+  <div class="sep"><div class="l"></div><span class="ico">❀</span><div class="r"></div></div>
+
+  <!-- ══════════════════════════════
+       BLOQUE 9 — RSVP
+  ══════════════════════════════ -->
+  <div class="story-block">
+    <div class="wc-blob" style="transition-delay:0.2s">
+      <svg viewBox="0 0 390 680" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><filter id="b9f1"><feGaussianBlur stdDeviation="9"/></filter><filter id="b9f2"><feGaussianBlur stdDeviation="4.5"/></filter></defs>
+        <path d="M195,65 C258,42 348,85 365,172 C384,270 342,378 272,412
+                 C212,440 135,428 82,382 C22,332 8,248 35,175
+                 C62,98 122,62 185,58 C189,58 193,67 195,65Z"
+              fill="rgba(108,195,162,0.19)" filter="url(#b9f1)"/>
+        <path d="M200,100 C258,80 325,122 340,202 C358,292 316,388 250,420
+                 C192,448 118,435 72,387 C22,336 15,262 48,195
+                 C80,124 142,92 198,88 C200,88 200,102 200,100Z"
+              fill="rgba(158,148,215,0.22)" filter="url(#b9f2)"/>
+        <path d="M198,148 C246,130 300,165 314,222 C330,288 300,350 252,370
+                 C208,388 152,372 126,334 C98,294 110,240 140,208
+                 C163,180 165,164 198,148Z"
+              fill="rgba(88,182,150,0.20)" filter="url(#b9f2)"/>
+        <path d="M56,195 C76,170 112,184 106,215 C100,245 62,252 46,225
+                 C32,200 38,218 56,195Z"
+              fill="rgba(108,195,162,0.17)" filter="url(#b9f1)"/>
+        <path d="M335,388 C355,364 387,378 379,408 C371,436 336,442 322,416
+                 C310,392 317,410 335,388Z"
+              fill="rgba(158,148,215,0.14)" filter="url(#b9f1)"/>
+        <path d="M52,435 C70,412 100,427 94,455 C88,482 54,488 40,463
+                 C28,440 36,456 52,435Z"
+              fill="rgba(108,195,162,0.13)" filter="url(#b9f1)"/>
+      </svg>
+    </div>
+    <div class="petals-wrap">
+      <div class="petal" style="left:18%;animation-duration:9s;animation-delay:0.8s"><svg width="11" height="14" viewBox="0 0 11 14"><path d="M5,1 C9,2 10,7 8,11 C6,14 1,13 1,9 C-1,5 2,1 5,1Z" fill="rgba(255,182,193,0.58)"/></svg></div>
+      <div class="petal" style="left:65%;animation-duration:8s;animation-delay:0s"><svg width="12" height="16" viewBox="0 0 12 16"><path d="M6,1 C10,3 11,8 9,12 C7,15 2,14 1,10 C-1,5 2,1 6,1Z" fill="rgba(201,161,85,0.50)"/></svg></div>
+      <div class="petal" style="left:40%;animation-duration:11s;animation-delay:3s"><svg width="10" height="13" viewBox="0 0 10 13"><path d="M5,1 C8,2 9,6 7,10 C5,12 1,11 1,7 C-1,4 2,1 5,1Z" fill="rgba(170,220,200,0.55)"/></svg></div>
+    </div>
+    <div class="fx-zoom fx-d1 sb-pre">Confirmación</div>
+    <div class="fx-zoom fx-d2 sb-title">¿Vendrás?</div>
+    <div class="divider-gold fx-zoom fx-d3" style="margin:14px auto;"></div>
+    <div class="fx-zoom fx-d4 sb-body" style="margin-bottom:4px;">
+      Confírmanos tu asistencia antes del<br>
+      <strong style="font-weight:400;color:var(--gold);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;">15 de Septiembre de 2026</strong>
+    </div>
+    <div id="rsvp-wrap" style="width:100%;margin-top:10px;">
+      <div class="asist-btns fx-fall fx-d5">
+        <button class="asist-btn" id="btn-si" onclick="selAsist('si')"><span class="aico">🥂</span><span class="albl">¡Allí estaré!</span></button>
+        <button class="asist-btn" id="btn-no" onclick="selAsist('no')"><span class="aico">💌</span><span class="albl">No podré ir</span></button>
+      </div>
+      <div class="form-wrap fx-fall fx-d6">
+        <div class="form-group"><label>Nombre completo</label><input type="text" id="f-nombre" placeholder="Tu nombre y apellidos"></div>
+        <div id="campos-si" style="display:none;">
+          <div class="form-group"><label>Acompañantes</label><select id="f-acomp"><option value="0">Solo yo</option><option value="1">+ 1 persona</option><option value="2">+ 2 personas</option><option value="3">+ 3 personas</option></select></div>
+          <div class="form-group"><label>Alergias o intolerancias</label><input type="text" id="f-alergias" placeholder="Gluten, lactosa, frutos secos…"></div>
+        </div>
+        <div class="form-group"><label>Mensaje para los novios (opcional)</label><textarea id="f-mensaje" placeholder="Un deseo, un recuerdo especial…"></textarea></div>
+        <button class="btn-enviar" onclick="enviarRSVP()">✦ Confirmar asistencia ✦</button>
+      </div>
+    </div>
+    <div class="rsvp-ok" id="rsvp-ok">
+      <div class="ok-icon">💐</div>
+      <div class="ok-title">¡Gracias!</div>
+      <p class="ok-msg">Hemos recibido tu confirmación.<br>No podemos esperar a celebrarlo contigo.</p>
+    </div>
+  </div>
+
+  <div class="sep"><div class="l"></div><span class="ico">✦</span><div class="r"></div></div>
+
+  <!-- ══════════════════════════════
+       BLOQUE 10 — Regalo / IBAN
+  ══════════════════════════════ -->
+  <div class="story-block">
+    <div class="wc-blob" style="transition-delay:0.25s">
+      <svg viewBox="0 0 390 480" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><filter id="b10f1"><feGaussianBlur stdDeviation="8"/></filter><filter id="b10f2"><feGaussianBlur stdDeviation="4"/></filter></defs>
+        <path d="M196,52 C260,30 352,72 368,158 C386,255 342,360 272,393
+                 C211,422 134,410 82,363 C22,312 8,228 38,158
+                 C68,84 128,50 192,48 C194,48 195,54 196,52Z"
+              fill="rgba(228,195,138,0.20)" filter="url(#b10f1)"/>
+        <path d="M202,88 C258,68 328,112 344,188 C362,275 322,368 257,398
+                 C200,424 126,413 80,367 C31,318 22,244 55,180
+                 C88,112 148,80 202,78 C203,78 202,90 202,88Z"
+              fill="rgba(255,155,118,0.22)" filter="url(#b10f2)"/>
+        <path d="M198,128 C248,110 302,145 316,202 C332,268 302,328 255,348
+                 C210,366 155,350 128,313 C100,274 110,222 142,190
+                 C165,164 165,145 198,128Z"
+              fill="rgba(215,178,118,0.20)" filter="url(#b10f2)"/>
+        <path d="M60,162 C80,138 115,152 109,184 C103,213 66,220 50,194
+                 C36,170 42,184 60,162Z"
+              fill="rgba(228,195,138,0.18)" filter="url(#b10f1)"/>
+        <path d="M328,348 C348,325 380,340 372,368 C364,396 330,402 317,377
+                 C306,355 311,368 328,348Z"
+              fill="rgba(255,155,118,0.15)" filter="url(#b10f1)"/>
+        <path d="M346,90 C362,70 388,82 382,110 C376,135 348,142 334,118
+                 C322,96 332,108 346,90Z"
+              fill="rgba(228,195,138,0.15)" filter="url(#b10f1)"/>
+      </svg>
+    </div>
+    <div class="petals-wrap">
+      <div class="petal" style="left:25%;animation-duration:8s;animation-delay:0.5s"><svg width="12" height="16" viewBox="0 0 12 16"><path d="M6,1 C10,3 11,8 9,12 C7,15 2,14 1,10 C-1,5 2,1 6,1Z" fill="rgba(201,161,85,0.52)"/></svg></div>
+      <div class="petal" style="left:60%;animation-duration:10s;animation-delay:2s"><svg width="11" height="14" viewBox="0 0 11 14"><path d="M5,1 C9,2 10,7 8,11 C6,14 1,13 1,9 C-1,5 2,1 5,1Z" fill="rgba(255,182,193,0.56)"/></svg></div>
+      <div class="petal" style="left:5%;animation-duration:7.5s;animation-delay:3.5s"><svg width="10" height="13" viewBox="0 0 10 13"><path d="M5,1 C8,2 9,6 7,10 C5,12 1,11 1,7 C-1,4 2,1 5,1Z" fill="rgba(210,185,225,0.54)"/></svg></div>
+      <div class="petal" style="left:80%;animation-duration:9s;animation-delay:1s"><svg width="13" height="17" viewBox="0 0 13 17"><path d="M6,1 C11,3 12,8 10,13 C8,17 2,16 1,11 C-1,6 2,1 6,1Z" fill="rgba(170,220,200,0.52)"/></svg></div>
+    </div>
+    <div class="fx-zoom fx-d1 sb-pre">Un detalle si quieres</div>
+    <div class="fx-zoom fx-d2 sb-title">Nuestro viaje</div>
+    <div class="divider-gold fx-zoom fx-d3" style="margin:14px auto;"></div>
+    <div class="banco-box fx-right fx-d4">
+      <div class="banco-icon">✈️</div>
+      <div class="banco-desc">Si deseas hacernos un regalo,<br>ayúdanos a sumar kilómetros<br>a nuestro viaje de luna de miel.</div>
+      <div class="banco-iban">ES39 3058 0226 3227 2001 5191</div>
+      <div class="banco-tit">Juan García · Marta López</div>
+    </div>
+    <div class="fx-zoom fx-d5" style="margin-top:20px;opacity:0.3;text-align:center;">
+      <svg width="65" height="48" viewBox="0 0 80 60" fill="none">
+        <path d="M5 30 L75 5 L55 55 L38 38 Z" stroke="#c9a155" stroke-width="1.2" fill="none"/>
+        <path d="M38 38 L42 30 L55 55" stroke="#c9a155" stroke-width="0.8" fill="none"/>
+        <path d="M38 38 L5 30" stroke="#c9a155" stroke-width="0.6" stroke-dasharray="3,3"/>
+        <path d="M68 10 Q70 7 72 10 Q74 7 76 10 Q76 14 72 17 Q68 14 68 10Z" stroke="#c9a155" stroke-width="0.8" fill="none"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="f-names">Juan & Marta</div>
+    <div class="f-date">11 · OCTUBRE · 2026 · ARCHENA</div>
+    <div class="f-heart">♡ ♡ ♡</div>
+    <div class="f-phones">
+      <div class="f-phone"><div class="ph-n">Juan</div><div class="ph-t">658 962 267</div></div>
+      <div class="f-phone"><div class="ph-n">Marta</div><div class="ph-t">695 864 998</div></div>
+    </div>
+    <div class="f-gracias" style="margin-top:26px;">¡Gracias por acompañarnos!</div>
+  </footer>
+
+</div><!-- /contenido -->
+
+<script>
+/* ══════════════════════════════════
+   ABRIR INVITACIÓN
+══════════════════════════════════ */
+let playing = false;
+
+function abrirInvitacion() {
+  const audio = document.getElementById('wedding-audio');
+  audio.play().then(() => {
+    playing = true;
+    document.getElementById('music-btn').classList.add('playing');
+  }).catch(() => {});
+
+  document.getElementById('portada').classList.add('ocultar');
+  const cont = document.getElementById('contenido');
+  cont.style.pointerEvents = 'all';
+  setTimeout(() => {
+    cont.classList.add('visible');
+    document.getElementById('portada').style.display = 'none';
+    document.getElementById('music-btn').classList.add('show');
+    // Dispara la ola serpentina del hero
+    document.getElementById('hero-img').classList.add('wave-open');
+    // Activa el texto del hero (tras la 3ª franja: ~3.3s)
+    setTimeout(() => {
+      document.getElementById('hero-text-inner').classList.add('vis');
+    }, 3400);
+    // Inicia parallax
+    requestAnimationFrame(photoParallax);
+  }, 950);
+}
+
+/* ══════════════════════════════════
+   MÚSICA
+══════════════════════════════════ */
+function toggleMusic() {
+  const audio = document.getElementById('wedding-audio');
+  const btn   = document.getElementById('music-btn');
+  if (playing) {
+    audio.pause(); playing = false; btn.classList.remove('playing');
+  } else {
+    audio.play();  playing = true;  btn.classList.add('playing');
+  }
+}
+
+/* ══════════════════════════════════════
+   MANCHAS ACUARELA — crecen al hacer scroll
+══════════════════════════════════════ */
+const obsBlobs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('grow');
+      obsBlobs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.05 });
+document.querySelectorAll('.wc-blob').forEach(b => obsBlobs.observe(b));
+
+/* ══════════════════════════════════════
+   SCROLL — ANIMACIONES DE ELEMENTOS
+   Observa todos los elementos con clase
+   fx-fall, fx-right, fx-zoom, fx-flip
+   y les añade .vis cuando entran en pantalla
+══════════════════════════════════════ */
+const FX_CLASSES = ['fx-fall','fx-right','fx-zoom','fx-flip'];
+const fxSelector = FX_CLASSES.map(c => `.${c}`).join(',');
+
+const obsFx = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('vis');
+      obsFx.unobserve(e.target); // solo una vez
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll(fxSelector).forEach(el => obsFx.observe(el));
+
+/* ══════════════════════════════════════
+   SCROLL — TIMELINE (entrada en cascada)
+══════════════════════════════════════ */
+const obsTL = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.tl-item').forEach((el, i) => {
+        setTimeout(() => el.classList.add('vis'), i * 130);
+      });
+      obsTL.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.tl-wrap').forEach(w => obsTL.observe(w));
+
+/* ══════════════════════════════════════
+   SCROLL — FOTOS (reveal + parallax)
+══════════════════════════════════════ */
+const panels = Array.from(document.querySelectorAll('.photo-panel'));
+
+/* Intersection Observer: dispara la clase .vis que activa los CSS transitions */
+const obsPhoto = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('vis');
+      obsPhoto.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15 });
+panels.forEach(p => obsPhoto.observe(p));
+
+/* rAF: parallax continuo de la imagen dentro del panel
+   — Para fx-wave-lr y fx-wave-tb la imagen está DENTRO de .img-clip
+   — Para fx-blur la imagen es hija directa del panel
+   — Importante: NO tocar clip-path, solo translateY */
+function photoParallax() {
+  const vH = window.innerHeight;
+  panels.forEach(panel => {
+    // Busca la imagen (directa o dentro de .img-clip)
+    const img = panel.querySelector('img');
+    if (!img || panel.classList.contains('img-err')) return;
+
+    const rect  = panel.getBoundingClientRect();
+    const pH    = panel.offsetHeight;
+    const ratio = (rect.top + pH / 2) / vH - 0.5; // -0.5 arriba … +0.5 abajo
+    const yOff  = ratio * 32; // máx ±32px
+
+    const isVisible = panel.classList.contains('vis');
+    const baseY     = isVisible ? 0 : 4;
+    const scaleVal  = isVisible ? 1 : 1.06;
+
+    img.style.transform = `translateY(calc(${baseY}% + ${yOff.toFixed(1)}px)) scale(${scaleVal})`;
+  });
+  requestAnimationFrame(photoParallax);
+}
+
+/* Manejo de error de imágenes */
+panels.forEach(panel => {
+  const img = panel.querySelector('img');
+  if (!img) return;
+  img.addEventListener('error', () => {
+    panel.classList.add('img-err');
+  });
+});
+
+/* ══════════════════════════════════
+   CUENTA ATRÁS
+══════════════════════════════════ */
+function updateCountdown() {
+  const diff = new Date('2026-10-11T12:30:00') - new Date();
+  if (diff <= 0) {
+    ['cd-dias','cd-horas','cd-min','cd-seg'].forEach(id => document.getElementById(id).textContent = '0');
+    return;
+  }
+  document.getElementById('cd-dias').textContent  = Math.floor(diff / 86400000);
+  document.getElementById('cd-horas').textContent = Math.floor((diff % 86400000) / 3600000);
+  document.getElementById('cd-min').textContent   = Math.floor((diff % 3600000) / 60000);
+  document.getElementById('cd-seg').textContent   = Math.floor((diff % 60000) / 1000);
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+/* ══════════════════════════════════
+   RSVP
+══════════════════════════════════ */
+let asistencia = null;
+function selAsist(v) {
+  asistencia = v;
+  document.getElementById('btn-si').className = 'asist-btn' + (v === 'si' ? ' sel-si' : '');
+  document.getElementById('btn-no').className = 'asist-btn' + (v === 'no' ? ' sel-no' : '');
+  document.getElementById('campos-si').style.display = v === 'si' ? 'block' : 'none';
+}
+function enviarRSVP() {
+  if (!document.getElementById('f-nombre').value.trim()) { alert('Por favor, escribe tu nombre.'); return; }
+  if (!asistencia) { alert('Indica si podrás asistir.'); return; }
+  document.getElementById('rsvp-wrap').style.display = 'none';
+  document.getElementById('rsvp-ok').style.display = 'block';
+}
+</script>
+</body>
+</html>
