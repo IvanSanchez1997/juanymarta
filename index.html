@@ -2167,13 +2167,11 @@ function enviarRSVP() {
   /* ── Google Apps Script Web App ──
      Sustituye GOOGLE_SCRIPT_URL por tu URL publicada */
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwcw--MRqOZ44BNgm1ncqtBJI43evwMSWFj1SUD-WeDNwZ-Ho0z59TW2V1HPD9pDtJo/exec';
-  if (GOOGLE_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbwcw--MRqOZ44BNgm1ncqtBJI43evwMSWFj1SUD-WeDNwZ-Ho0z59TW2V1HPD9pDtJo/exec') {
     fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST', mode: 'no-cors',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(datos)
     }).catch(() => {});
-  }
 
   /* Confirmación visual */
   document.getElementById('rsvp-wrap').style.display = 'none';
