@@ -63,8 +63,8 @@ body {
   transform: scale(0.04);
   opacity: 0;
   transition:
-    transform 3s cubic-bezier(0.16,1,0.3,1),
-    opacity   2.4s ease;
+    transform 1.6s cubic-bezier(0.16,1,0.3,1),
+    opacity   1.2s ease;
   transform-origin: center center;
 }
 .wc-blob.grow { transform: scale(1); opacity: 1; }
@@ -347,13 +347,13 @@ body {
 
 /* Cuando el hero recibe .wave-open: las tiras se van */
 #hero-img.wave-open .hs1 {
-  animation: hstripeR 1.4s cubic-bezier(0.76,0,0.18,1) 0.1s forwards;
+  animation: hstripeR 0.9s cubic-bezier(0.76,0,0.18,1) 0.05s forwards;
 }
 #hero-img.wave-open .hs2 {
-  animation: hstripeL 1.4s cubic-bezier(0.76,0,0.18,1) 1.0s forwards;
+  animation: hstripeL 0.9s cubic-bezier(0.76,0,0.18,1) 0.55s forwards;
 }
 #hero-img.wave-open .hs3 {
-  animation: hstripeR 1.4s cubic-bezier(0.76,0,0.18,1) 1.9s forwards;
+  animation: hstripeR 0.9s cubic-bezier(0.76,0,0.18,1) 1.05s forwards;
 }
 
 @keyframes hstripeR {
@@ -377,13 +377,13 @@ body {
 .hsh3 { top: 66%; height: 36%; }
 
 #hero-img.wave-open .hsh1 {
-  animation: hsheenR 1.4s ease 0.1s forwards;
+  animation: hsheenR 0.9s ease 0.05s forwards;
 }
 #hero-img.wave-open .hsh2 {
-  animation: hsheenL 1.4s ease 1.0s forwards;
+  animation: hsheenL 0.9s ease 0.55s forwards;
 }
 #hero-img.wave-open .hsh3 {
-  animation: hsheenR 1.4s ease 1.9s forwards;
+  animation: hsheenR 0.9s ease 1.05s forwards;
 }
 @keyframes hsheenR {
   0%   { opacity:1; left:-80px; }
@@ -410,7 +410,7 @@ body {
 .sb-item {
   opacity: 0;
   transform: translateY(28px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transition: opacity 0.5s ease, transform 0.8s ease;
 }
 .sb-item.vis { opacity: 1; transform: none; }
 
@@ -437,7 +437,7 @@ body {
 .fx-right {
   opacity: 0;
   transform: translateX(60px) scale(0.95);
-  transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1),
+  transition: opacity 0.5s cubic-bezier(0.22,1,0.36,1),
               transform 0.8s cubic-bezier(0.22,1,0.36,1);
 }
 .fx-right.vis { opacity: 1; transform: translateX(0) scale(1); }
@@ -464,12 +464,12 @@ body {
 
 /* Delays para fx- */
 .fx-d1 { transition-delay: 0s; }
-.fx-d2 { transition-delay: 0.18s; }
-.fx-d3 { transition-delay: 0.36s; }
-.fx-d4 { transition-delay: 0.54s; }
-.fx-d5 { transition-delay: 0.72s; }
-.fx-d6 { transition-delay: 0.90s; }
-.fx-d7 { transition-delay: 1.08s; }
+.fx-d2 { transition-delay: 0.1s; }
+.fx-d3 { transition-delay: 0.18s; }
+.fx-d4 { transition-delay: 0.26s; }
+.fx-d5 { transition-delay: 0.34s; }
+.fx-d6 { transition-delay: 0.42s; }
+.fx-d7 { transition-delay: 0.50s; }
 
 .sb-pre {
   font-family: 'Cinzel', serif;
@@ -595,7 +595,7 @@ body {
 /* Cuando se activa .vis: cada tira se desliza hacia fuera */
 /* Tira 1 → sale por la derecha */
 .photo-panel.fx-wave-lr.vis .s1 {
-  animation: stripeRight 1.3s cubic-bezier(0.76,0,0.18,1) 0s forwards;
+  animation: stripeRight 0.8s cubic-bezier(0.76,0,0.18,1) 0s forwards;
 }
 /* Tira 2 → sale por la izquierda */
 .photo-panel.fx-wave-lr.vis .s2 {
@@ -603,7 +603,7 @@ body {
 }
 /* Tira 3 → sale por la derecha */
 .photo-panel.fx-wave-lr.vis .s3 {
-  animation: stripeRight 1.3s cubic-bezier(0.76,0,0.18,1) 2.2s forwards;
+  animation: stripeRight 0.8s cubic-bezier(0.76,0,0.18,1) 1.3s forwards;
 }
 
 @keyframes stripeRight {
@@ -684,7 +684,7 @@ body {
 .photo-panel.fx-wave-tb .img-clip {
   position: absolute; inset: 0;
   clip-path: inset(0 0 100% 0 round 0px);
-  transition: clip-path 3.2s cubic-bezier(0.76,0,0.24,1);
+  transition: clip-path 1.6s cubic-bezier(0.76,0,0.24,1);
   will-change: clip-path;
 }
 .photo-panel.fx-wave-tb.vis .img-clip {
@@ -706,7 +706,7 @@ body {
     transparent 100%);
   z-index: 4; pointer-events: none;
   top: -70px;
-  transition: top 3.2s cubic-bezier(0.76,0,0.24,1);
+  transition: top 1.6s cubic-bezier(0.76,0,0.24,1);
 }
 .photo-panel.fx-wave-tb.vis .wave-sheen { top: 108%; }
 
@@ -829,35 +829,128 @@ body {
 .cd-num { font-family: 'Cormorant Garamond', serif; font-size: 36px; color: var(--gold); line-height: 1; }
 .cd-label { font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 2px; color: var(--text-light); margin-top: 4px; text-transform: uppercase; }
 
-/* ── RSVP ── */
-.asist-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-bottom: 16px; }
-.asist-btn {
-  padding: 14px 10px;
-  border: 1px solid rgba(201,161,85,0.25);
-  border-radius: 10px;
+/* ── RSVP — NUEVO FORMULARIO DINÁMICO ────────────────── */
+
+/* Pasos del formulario con separación visual */
+.rsvp-step {
+  margin-bottom: 22px;
+}
+
+/* Pregunta de cada paso */
+.rsvp-pregunta {
+  font-family: 'Cinzel', serif;
+  font-size: 8px; letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.rsvp-opcional {
+  font-family: 'Jost', sans-serif;
+  font-size: 9px; letter-spacing: 0;
+  text-transform: none; font-weight: 300;
+  color: var(--text-light); opacity: 0.7;
+}
+
+/* Radios Sí / No — grandes, tipo tarjeta */
+.rsvp-radios {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.rsvp-radio {
+  cursor: pointer;
+}
+.rsvp-radio input[type="radio"] { display: none; }
+.rr-inner {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 16px 10px;
+  border: 1.5px solid rgba(201,161,85,0.25);
+  border-radius: 12px;
   background: rgba(255,255,255,0.65);
   backdrop-filter: blur(8px);
-  cursor: pointer; text-align: center; transition: all 0.3s;
-  font-family: 'Jost', sans-serif;
+  transition: all 0.3s;
+  user-select: none;
 }
-.asist-btn .aico { font-size: 22px; display: block; margin-bottom: 5px; }
-.asist-btn .albl { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--text); }
-.asist-btn.sel-si { background: rgba(170,220,200,0.2); border-color: #8abd9c; }
-.asist-btn.sel-no { background: rgba(255,182,170,0.2); border-color: #d4906a; }
+.rr-ico { font-size: 24px; margin-bottom: 6px; }
+.rr-txt {
+  font-family: 'Cinzel', serif; font-size: 7.5px;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--text);
+}
+/* Estado seleccionado */
+.rsvp-radio input:checked + .rr-inner {
+  border-color: var(--gold);
+  background: rgba(201,161,85,0.08);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+#lbl-no input:checked + .rr-inner {
+  border-color: #d4906a;
+  background: rgba(212,144,106,0.08);
+  box-shadow: 0 0 0 1px #d4906a;
+}
+
+/* Sección desplegable con animación */
+.rsvp-seccion {
+  animation: rsvpSlideIn 0.5s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes rsvpSlideIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Mensaje "Lo sentimos" en sección No */
+.rsvp-no-msg {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 16px;
+  color: var(--text-light);
+  text-align: center;
+  padding: 14px 0 4px;
+  line-height: 1.7;
+}
+
+/* Tarjeta por cada adulto/niño */
+.persona-card {
+  background: rgba(255,255,255,0.55);
+  border: 1px solid rgba(201,161,85,0.18);
+  border-radius: 10px;
+  padding: 16px 16px 8px;
+  margin-bottom: 12px;
+  animation: rsvpSlideIn 0.4s cubic-bezier(0.16,1,0.3,1) both;
+}
+.persona-card-title {
+  font-family: 'Cinzel', serif;
+  font-size: 7px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 12px; opacity: 0.8;
+}
 
 .form-wrap { width: 100%; }
 .form-group { margin-bottom: 14px; }
-.form-group label { display: block; font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 7px; }
-.form-group input, .form-group select, .form-group textarea {
+.form-group label {
+  display: block;
+  font-family: 'Cinzel', serif; font-size: 7px;
+  letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 7px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
   width: 100%; padding: 12px 14px;
   border: 1px solid rgba(201,161,85,0.3);
   border-radius: 8px;
   background: rgba(255,255,255,0.7);
   font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 300;
   color: var(--text); outline: none; transition: border-color 0.3s;
+  appearance: none; -webkit-appearance: none;
 }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); background: white; }
+.form-group select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a155' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus { border-color: var(--gold); background: white; }
 .form-group textarea { height: 80px; resize: none; }
+
 .btn-enviar {
   width: 100%; padding: 15px;
   background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
@@ -870,6 +963,78 @@ body {
 .rsvp-ok .ok-icon { font-size: 48px; margin-bottom: 14px; }
 .rsvp-ok .ok-title { font-family: 'Great Vibes', cursive; font-size: 44px; color: var(--text); margin-bottom: 8px; }
 .rsvp-ok .ok-msg { font-size: 13px; font-weight: 200; color: var(--text-light); line-height: 1.8; }
+
+/* ── CARRUSEL DE FOTOS ─────────────────────────── */
+.carousel-wrap {
+  width: 100%;
+  padding: 32px 0 24px;
+  text-align: center;
+}
+.carousel-pre {
+  font-family: 'Cinzel', serif;
+  font-size: 8px; letter-spacing: 5px;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 18px; opacity: 0.85;
+}
+.carousel-track-outer {
+  width: 100%; overflow: hidden;
+  position: relative;
+  border-radius: 12px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+}
+.carousel-track {
+  display: flex;
+  transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
+  will-change: transform;
+}
+.carousel-slide {
+  min-width: 100%; height: 260px;
+  position: relative; overflow: hidden;
+  background: var(--gold-pale);
+  flex-shrink: 0;
+}
+.carousel-slide img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Placeholder cuando no hay imagen */
+.c-placeholder {
+  display: none;
+  flex-direction: column; align-items: center; justify-content: center;
+  position: absolute; inset: 0;
+  font-size: 28px; gap: 8px; color: var(--text-light);
+}
+.c-placeholder span {
+  font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 300;
+  letter-spacing: 1px; opacity: 0.6;
+}
+.carousel-slide.no-img img { display: none; }
+.carousel-slide.no-img .c-placeholder { display: flex; }
+
+/* Controles */
+.carousel-controls {
+  display: flex; align-items: center; justify-content: center;
+  gap: 14px; margin-top: 14px;
+}
+.c-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid rgba(201,161,85,0.35);
+  background: rgba(255,255,255,0.75); backdrop-filter: blur(6px);
+  color: var(--gold); font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; flex-shrink: 0;
+}
+.c-btn:hover { background: var(--gold); color: white; border-color: var(--gold); }
+.carousel-dots { display: flex; gap: 7px; align-items: center; }
+.c-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(201,161,85,0.3); cursor: pointer;
+  transition: all 0.3s;
+}
+.c-dot.active {
+  background: var(--gold); transform: scale(1.3);
+}
 
 /* ── BANCO ── */
 .banco-box {
@@ -1315,7 +1480,49 @@ footer::before {
   <div class="sep"><div class="l"></div><span class="ico">✦</span><div class="r"></div></div>
 
   <!-- ══════════════════════════════
-       BLOQUE 7 — Menú
+       CARRUSEL DE FOTOS
+  ══════════════════════════════ -->
+  <div class="carousel-wrap fx-zoom" id="carousel-wrap">
+    <div class="carousel-pre">Un momento, un recuerdo</div>
+    <div class="carousel-track-outer">
+      <div class="carousel-track" id="carousel-track">
+        <!-- Cada slide: pon tus rutas reales en src -->
+        <div class="carousel-slide">
+          <img src="images/galeria1.jpeg" alt="Foto 1"
+               onerror="this.closest('.carousel-slide').classList.add('no-img')">
+          <div class="c-placeholder">📷<span>galeria1.jpeg</span></div>
+        </div>
+        <div class="carousel-slide">
+          <img src="images/galeria2.jpeg" alt="Foto 2"
+               onerror="this.closest('.carousel-slide').classList.add('no-img')">
+          <div class="c-placeholder">📷<span>galeria2.jpeg</span></div>
+        </div>
+        <div class="carousel-slide">
+          <img src="images/galeria3.jpeg" alt="Foto 3"
+               onerror="this.closest('.carousel-slide').classList.add('no-img')">
+          <div class="c-placeholder">📷<span>galeria3.jpeg</span></div>
+        </div>
+        <div class="carousel-slide">
+          <img src="images/galeria4.jpeg" alt="Foto 4"
+               onerror="this.closest('.carousel-slide').classList.add('no-img')">
+          <div class="c-placeholder">📷<span>galeria4.jpeg</span></div>
+        </div>
+        <div class="carousel-slide">
+          <img src="images/galeria5.jpeg" alt="Foto 5"
+               onerror="this.closest('.carousel-slide').classList.add('no-img')">
+          <div class="c-placeholder">📷<span>galeria5.jpeg</span></div>
+        </div>
+      </div>
+    </div>
+    <!-- Controles -->
+    <div class="carousel-controls">
+      <button class="c-btn c-prev" onclick="carouselMove(-1)" aria-label="Anterior">&#8592;</button>
+      <div class="carousel-dots" id="carousel-dots"></div>
+      <button class="c-btn c-next" onclick="carouselMove(1)" aria-label="Siguiente">&#8594;</button>
+    </div>
+  </div>
+
+  <div class="sep"><div class="l"></div><span class="ico">✿</span><div class="r"></div></div>
   ══════════════════════════════ -->
   <div class="story-block">
     <div class="wc-blob" style="transition-delay:0.2s">
@@ -1453,25 +1660,148 @@ footer::before {
       Confírmanos tu asistencia antes del<br>
       <strong style="font-weight:400;color:var(--gold);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;">15 de Septiembre de 2026</strong>
     </div>
-    <div id="rsvp-wrap" style="width:100%;margin-top:10px;">
-      <div class="asist-btns fx-fall fx-d5">
-        <button class="asist-btn" id="btn-si" onclick="selAsist('si')"><span class="aico">🥂</span><span class="albl">¡Allí estaré!</span></button>
-        <button class="asist-btn" id="btn-no" onclick="selAsist('no')"><span class="aico">💌</span><span class="albl">No podré ir</span></button>
-      </div>
-      <div class="form-wrap fx-fall fx-d6">
-        <div class="form-group"><label>Nombre completo</label><input type="text" id="f-nombre" placeholder="Tu nombre y apellidos"></div>
-        <div id="campos-si" style="display:none;">
-          <div class="form-group"><label>Acompañantes</label><select id="f-acomp"><option value="0">Solo yo</option><option value="1">+ 1 persona</option><option value="2">+ 2 personas</option><option value="3">+ 3 personas</option></select></div>
-          <div class="form-group"><label>Alergias o intolerancias</label><input type="text" id="f-alergias" placeholder="Gluten, lactosa, frutos secos…"></div>
+
+    <!-- ══ FORMULARIO RSVP ══ -->
+    <div id="rsvp-wrap" style="width:100%;margin-top:18px;">
+
+      <!-- PASO 1: ¿Vas a asistir? -->
+      <div class="rsvp-step fx-fall fx-d5">
+        <div class="rsvp-pregunta">¿Vas a asistir?</div>
+        <div class="rsvp-radios">
+          <label class="rsvp-radio" id="lbl-si">
+            <input type="radio" name="asistir" value="si" onchange="rsvpAsistir('si')">
+            <span class="rr-inner">
+              <span class="rr-ico">🥂</span>
+              <span class="rr-txt">¡Allí estaré!</span>
+            </span>
+          </label>
+          <label class="rsvp-radio" id="lbl-no">
+            <input type="radio" name="asistir" value="no" onchange="rsvpAsistir('no')">
+            <span class="rr-inner">
+              <span class="rr-ico">💌</span>
+              <span class="rr-txt">No podré ir</span>
+            </span>
+          </label>
         </div>
-        <div class="form-group"><label>Mensaje para los novios (opcional)</label><textarea id="f-mensaje" placeholder="Un deseo, un recuerdo especial…"></textarea></div>
+      </div>
+
+      <!-- SECCIÓN "SÍ": campos completos -->
+      <div id="rsvp-si-wrap" class="rsvp-seccion" style="display:none;">
+
+        <!-- ADULTOS -->
+        <div class="rsvp-step">
+          <div class="rsvp-pregunta">Número de adultos que asistirán</div>
+          <div class="form-group" style="margin-top:10px;">
+            <select id="f-adultos" onchange="generarAdultos(this.value)">
+              <option value="1">1 adulto</option>
+              <option value="2">2 adultos</option>
+              <option value="3">3 adultos</option>
+              <option value="4">4 adultos</option>
+              <option value="5">5 adultos</option>
+              <option value="6">6 adultos</option>
+              <option value="7">7 adultos</option>
+              <option value="8">8 adultos</option>
+              <option value="9">9 adultos</option>
+              <option value="10">10 adultos</option>
+            </select>
+          </div>
+          <div id="ac"></div>
+        </div>
+
+        <!-- NIÑOS -->
+        <div class="rsvp-step">
+          <div class="rsvp-pregunta">Número de niños que asistirán</div>
+          <div class="form-group" style="margin-top:10px;">
+            <select id="f-ninos" onchange="generarNinos(this.value)">
+              <option value="0">Sin niños</option>
+              <option value="1">1 niño</option>
+              <option value="2">2 niños</option>
+              <option value="3">3 niños</option>
+              <option value="4">4 niños</option>
+              <option value="5">5 niños</option>
+              <option value="6">6 niños</option>
+              <option value="7">7 niños</option>
+              <option value="8">8 niños</option>
+              <option value="9">9 niños</option>
+              <option value="10">10 niños</option>
+            </select>
+          </div>
+          <div id="nc"></div>
+        </div>
+
+        <!-- COMENTARIOS -->
+        <div class="rsvp-step">
+          <div class="rsvp-pregunta">Comentarios o notas especiales <span class="rsvp-opcional">(opcional)</span></div>
+          <div class="form-group" style="margin-top:10px;">
+            <textarea id="f-mensaje" placeholder="Transporte, alojamiento, preferencias…"></textarea>
+          </div>
+        </div>
+
         <button class="btn-enviar" onclick="enviarRSVP()">✦ Confirmar asistencia ✦</button>
       </div>
-    </div>
+
+      <!-- SECCIÓN "NO": nombres de adultos y niños (sin alergias), hasta 10 cada uno -->
+      <div id="rsvp-no-wrap" class="rsvp-seccion" style="display:none;">
+
+        <!-- ADULTOS -->
+        <div class="rsvp-step">
+          <div class="rsvp-pregunta">Número de adultos en el grupo</div>
+          <div class="form-group" style="margin-top:10px;">
+            <select id="f-adultos-no" onchange="generarAdultosNo(this.value)">
+              <option value="1">1 adulto</option>
+              <option value="2">2 adultos</option>
+              <option value="3">3 adultos</option>
+              <option value="4">4 adultos</option>
+              <option value="5">5 adultos</option>
+              <option value="6">6 adultos</option>
+              <option value="7">7 adultos</option>
+              <option value="8">8 adultos</option>
+              <option value="9">9 adultos</option>
+              <option value="10">10 adultos</option>
+            </select>
+          </div>
+          <div id="acn"></div>
+        </div>
+
+        <!-- NIÑOS -->
+        <div class="rsvp-step">
+          <div class="rsvp-pregunta">Número de niños en el grupo</div>
+          <div class="form-group" style="margin-top:10px;">
+            <select id="f-ninos-no" onchange="generarNinosNo(this.value)">
+              <option value="0">Sin niños</option>
+              <option value="1">1 niño</option>
+              <option value="2">2 niños</option>
+              <option value="3">3 niños</option>
+              <option value="4">4 niños</option>
+              <option value="5">5 niños</option>
+              <option value="6">6 niños</option>
+              <option value="7">7 niños</option>
+              <option value="8">8 niños</option>
+              <option value="9">9 niños</option>
+              <option value="10">10 niños</option>
+            </select>
+          </div>
+          <div id="ncn"></div>
+        </div>
+
+        <!-- COMENTARIOS -->
+        <div class="rsvp-step">
+          <div class="rsvp-pregunta">Comentarios <span class="rsvp-opcional">(opcional)</span></div>
+          <div class="form-group" style="margin-top:10px;">
+            <textarea id="f-mensaje-no" placeholder="Un deseo, un abrazo virtual…"></textarea>
+          </div>
+        </div>
+
+        <button class="btn-enviar" onclick="enviarRSVP()">✦ Enviar respuesta ✦</button>
+      </div>
+
+    </div><!-- /rsvp-wrap -->
+
+    <!-- CONFIRMACIÓN -->
     <div class="rsvp-ok" id="rsvp-ok">
       <div class="ok-icon">💐</div>
-      <div class="ok-title">¡Gracias!</div>
-      <p class="ok-msg">Hemos recibido tu confirmación.<br>No podemos esperar a celebrarlo contigo.</p>
+      <div class="ok-title" id="rsvp-ok-title">¡Gracias!</div>
+      <p class="ok-msg" id="rsvp-ok-msg">Hemos recibido tu confirmación.<br>No podemos esperar a celebrarlo contigo.</p>
     </div>
   </div>
 
@@ -1571,7 +1901,7 @@ function abrirInvitacion() {
     // Activa el texto del hero (tras la 3ª franja: ~3.3s)
     setTimeout(() => {
       document.getElementById('hero-text-inner').classList.add('vis');
-    }, 3400);
+    }, 1900);
     // Inicia parallax
     requestAnimationFrame(photoParallax);
   }, 950);
@@ -1706,21 +2036,203 @@ updateCountdown();
 setInterval(updateCountdown, 1000);
 
 /* ══════════════════════════════════
-   RSVP
+   RSVP — FORMULARIO DINÁMICO
+   JSON enviado a Google Sheets:
+   { asiste, totalAdultos, totalNinos,
+     adulto1_nombre, adulto1_alergia (solo si=sí)
+     nino1_nombre, nino1_edad, nino1_alergia (solo si=sí)
+     comentarios, timestamp }
 ══════════════════════════════════ */
-let asistencia = null;
-function selAsist(v) {
-  asistencia = v;
-  document.getElementById('btn-si').className = 'asist-btn' + (v === 'si' ? ' sel-si' : '');
-  document.getElementById('btn-no').className = 'asist-btn' + (v === 'no' ? ' sel-no' : '');
-  document.getElementById('campos-si').style.display = v === 'si' ? 'block' : 'none';
+
+let rsvpAsistencia = null;
+
+/* ── Genera tarjetas de adultos ── */
+function _generarAdultos(containerId, n, conAlergias) {
+  n = parseInt(n);
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = '';
+  for (let i = 1; i <= n; i++) {
+    const label = i === 1 ? 'Adulto principal' : 'Adulto ' + i;
+    const alergiaField = conAlergias
+      ? '<div class="form-group"><label>Alergias o intolerancias <span class="rsvp-opcional">(opcional)</span></label>' +
+        '<input type="text" id="' + containerId + '_a' + i + '_al" placeholder="Gluten, lactosa, frutos secos…"></div>'
+      : '';
+    wrap.innerHTML +=
+      '<div class="persona-card">' +
+        '<div class="persona-card-title">' + label + '</div>' +
+        '<div class="form-group"><label>Nombre completo</label>' +
+          '<input type="text" id="' + containerId + '_a' + i + '_n" placeholder="Nombre y apellidos">' +
+        '</div>' + alergiaField +
+      '</div>';
+  }
 }
+
+/* ── Genera tarjetas de niños ── */
+function _generarNinos(containerId, n, conAlergias) {
+  n = parseInt(n);
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = '';
+  const edades = [...Array(18)].map((_,j) =>
+    '<option value="' + j + '">' + (j===0?'Menos de 1 año': j+(j===1?' año':' años')) + '</option>'
+  ).join('');
+  for (let i = 1; i <= n; i++) {
+    const alergiaField = conAlergias
+      ? '<div class="form-group"><label>Alergias o intolerancias <span class="rsvp-opcional">(opcional)</span></label>' +
+        '<input type="text" id="' + containerId + '_n' + i + '_al" placeholder="Gluten, lactosa, frutos secos…"></div>'
+      : '';
+    wrap.innerHTML +=
+      '<div class="persona-card">' +
+        '<div class="persona-card-title">Niño ' + i + '</div>' +
+        '<div class="form-group"><label>Nombre</label>' +
+          '<input type="text" id="' + containerId + '_n' + i + '_n" placeholder="Nombre del niño/a">' +
+        '</div>' +
+        '<div class="form-group"><label>Edad</label>' +
+          '<select id="' + containerId + '_n' + i + '_e">' + edades + '</select>' +
+        '</div>' + alergiaField +
+      '</div>';
+  }
+}
+
+function generarAdultos(n)    { _generarAdultos('ac',  n, true);  }
+function generarNinos(n)      { _generarNinos('nc',    n, true);  }
+function generarAdultosNo(n)  { _generarAdultos('acn', n, false); }
+function generarNinosNo(n)    { _generarNinos('ncn',   n, false); }
+
+/* ── Selección Sí / No ── */
+function rsvpAsistir(v) {
+  rsvpAsistencia = v;
+  const siWrap = document.getElementById('rsvp-si-wrap');
+  const noWrap = document.getElementById('rsvp-no-wrap');
+  if (v === 'si') {
+    siWrap.style.display = 'block';
+    noWrap.style.display = 'none';
+    if (!document.getElementById('ac').children.length) generarAdultos(1);
+  } else {
+    siWrap.style.display = 'none';
+    noWrap.style.display = 'block';
+    if (!document.getElementById('acn').children.length) generarAdultosNo(1);
+  }
+}
+
+/* ── Sanitizar ── */
+function san(s) { return String(s||'').replace(/[<>'"]/g,'').trim().substring(0,200); }
+
+/* ── Enviar RSVP ── */
 function enviarRSVP() {
-  if (!document.getElementById('f-nombre').value.trim()) { alert('Por favor, escribe tu nombre.'); return; }
-  if (!asistencia) { alert('Indica si podrás asistir.'); return; }
+  if (!rsvpAsistencia) { alert('Por favor, indica si podrás asistir.'); return; }
+
+  const esSi    = rsvpAsistencia === 'si';
+  const prefA   = esSi ? 'ac'  : 'acn';
+  const prefN   = esSi ? 'nc'  : 'ncn';
+  const selectA = document.getElementById(esSi ? 'f-adultos' : 'f-adultos-no');
+  const selectN = document.getElementById(esSi ? 'f-ninos'   : 'f-ninos-no');
+  const msgEl   = document.getElementById(esSi ? 'f-mensaje' : 'f-mensaje-no');
+
+  const totalAdultos = parseInt(selectA.value);
+  const totalNinos   = parseInt(selectN.value);
+
+  if (esSi && totalAdultos < 1) { alert('Indica al menos 1 adulto.'); return; }
+
+  const datos = {
+    asiste:       esSi ? 'Sí' : 'No',
+    totalAdultos: totalAdultos,
+    totalNinos:   totalNinos,
+  };
+
+  /* Adultos */
+  for (let i = 1; i <= totalAdultos; i++) {
+    const nEl = document.getElementById(prefA + '_a' + i + '_n');
+    const aEl = esSi ? document.getElementById(prefA + '_a' + i + '_al') : null;
+    const nombre = nEl ? san(nEl.value) : '';
+    if (!nombre) { alert('Escribe el nombre del adulto ' + i + '.'); return; }
+    datos['adulto' + i + '_nombre']  = nombre;
+    datos['adulto' + i + '_alergia'] = aEl ? (san(aEl.value) || 'Ninguna') : '—';
+  }
+
+  /* Niños */
+  for (let i = 1; i <= totalNinos; i++) {
+    const nEl = document.getElementById(prefN + '_n' + i + '_n');
+    const eEl = document.getElementById(prefN + '_n' + i + '_e');
+    const aEl = esSi ? document.getElementById(prefN + '_n' + i + '_al') : null;
+    const nombre = nEl ? san(nEl.value) : '';
+    if (!nombre) { alert('Escribe el nombre del niño ' + i + '.'); return; }
+    datos['nino' + i + '_nombre']  = nombre;
+    datos['nino' + i + '_edad']    = eEl ? parseInt(eEl.value) : 0;
+    datos['nino' + i + '_alergia'] = aEl ? (san(aEl.value) || 'Ninguna') : '—';
+  }
+
+  datos.comentarios = msgEl ? san(msgEl.value) : '';
+  datos.timestamp   = new Date().toISOString();
+
+  /* ── Google Apps Script Web App ──
+     Sustituye GOOGLE_SCRIPT_URL por tu URL publicada */
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwcw--MRqOZ44BNgm1ncqtBJI43evwMSWFj1SUD-WeDNwZ-Ho0z59TW2V1HPD9pDtJo/exec';
+  if (GOOGLE_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbwcw--MRqOZ44BNgm1ncqtBJI43evwMSWFj1SUD-WeDNwZ-Ho0z59TW2V1HPD9pDtJo/exec') {
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datos)
+    }).catch(() => {});
+  }
+
+  /* Confirmación visual */
   document.getElementById('rsvp-wrap').style.display = 'none';
-  document.getElementById('rsvp-ok').style.display = 'block';
+  const ok = document.getElementById('rsvp-ok');
+  ok.style.display = 'block';
+  if (!esSi) {
+    document.getElementById('rsvp-ok-title').textContent = 'Lo sentiremos mucho';
+    document.getElementById('rsvp-ok-msg').textContent   =
+      'Gracias por avisarnos. Te llevaremos en el corazón ese día.';
+  }
+  ok.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
+/* ══════════════════════════════════
+   CARRUSEL
+══════════════════════════════════ */
+(function() {
+  const track  = document.getElementById('carousel-track');
+  const dotsEl = document.getElementById('carousel-dots');
+  if (!track) return;
+
+  const slides = track.querySelectorAll('.carousel-slide');
+  const total  = slides.length;
+  let current  = 0;
+  let autoT;
+
+  /* Crea puntos */
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'c-dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(n) {
+    current = (n + total) % total;
+    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+    dotsEl.querySelectorAll('.c-dot').forEach((d, i) =>
+      d.classList.toggle('active', i === current));
+    resetAuto();
+  }
+
+  function resetAuto() {
+    clearInterval(autoT);
+    autoT = setInterval(() => goTo(current + 1), 4500);
+  }
+
+  resetAuto();
+
+  /* Swipe táctil */
+  let tx = 0;
+  track.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive:true});
+  track.addEventListener('touchend',   e => {
+    const diff = tx - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) goTo(current + (diff > 0 ? 1 : -1));
+  }, {passive:true});
+
+  window.carouselMove = n => goTo(current + n);
+})();
+
 </script>
 </body>
 </html>
