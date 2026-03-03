@@ -63,8 +63,8 @@ body {
   transform: scale(0.04);
   opacity: 0;
   transition:
-    transform 1.6s cubic-bezier(0.16,1,0.3,1),
-    opacity   1.2s ease;
+    transform 3.6s cubic-bezier(0.16,1,0.3,1),
+    opacity   2.5s ease;
   transform-origin: center center;
 }
 .wc-blob.grow { transform: scale(1); opacity: 1; }
@@ -267,7 +267,7 @@ body {
 .hero-text-inner {
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity 1s ease 0.5s, transform 1s ease 0.5s;
+  transition: opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s;
 }
 .hero-text-inner.vis { opacity: 1; transform: none; }
 
@@ -347,13 +347,13 @@ body {
 
 /* Cuando el hero recibe .wave-open: las tiras se van */
 #hero-img.wave-open .hs1 {
-  animation: hstripeR 0.9s cubic-bezier(0.76,0,0.18,1) 0.05s forwards;
+  animation: hstripeR 0.7s cubic-bezier(0.76,0,0.18,1) 0.04s forwards;
 }
 #hero-img.wave-open .hs2 {
-  animation: hstripeL 0.9s cubic-bezier(0.76,0,0.18,1) 0.55s forwards;
+  animation: hstripeL 0.7s cubic-bezier(0.76,0,0.18,1) 0.40s forwards;
 }
 #hero-img.wave-open .hs3 {
-  animation: hstripeR 0.9s cubic-bezier(0.76,0,0.18,1) 1.05s forwards;
+  animation: hstripeR 0.7s cubic-bezier(0.76,0,0.18,1) 0.59s forwards;
 }
 
 @keyframes hstripeR {
@@ -377,13 +377,13 @@ body {
 .hsh3 { top: 66%; height: 36%; }
 
 #hero-img.wave-open .hsh1 {
-  animation: hsheenR 0.9s ease 0.05s forwards;
+  animation: hsheenR 0.7s ease 0.04s forwards;
 }
 #hero-img.wave-open .hsh2 {
-  animation: hsheenL 0.9s ease 0.55s forwards;
+  animation: hsheenL 0.7s ease 0.40s forwards;
 }
 #hero-img.wave-open .hsh3 {
-  animation: hsheenR 0.9s ease 1.05s forwards;
+  animation: hsheenR 0.7s ease 0.59s forwards;
 }
 @keyframes hsheenR {
   0%   { opacity:1; left:-80px; }
@@ -410,7 +410,7 @@ body {
 .sb-item {
   opacity: 0;
   transform: translateY(28px);
-  transition: opacity 0.5s ease, transform 0.8s ease;
+  transition: opacity 0.25s ease, transform 0.35s ease;
 }
 .sb-item.vis { opacity: 1; transform: none; }
 
@@ -428,8 +428,8 @@ body {
 .fx-fall {
   opacity: 0;
   transform: translate(-40px, 60px) rotate(-6deg) scale(0.92);
-  transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1),
-              transform 0.9s cubic-bezier(0.22,1,0.36,1);
+  transition: opacity 0.4s cubic-bezier(0.22,1,0.36,1),
+              transform 0.4s cubic-bezier(0.22,1,0.36,1);
 }
 .fx-fall.vis { opacity: 1; transform: translate(0,0) rotate(0deg) scale(1); }
 
@@ -437,8 +437,8 @@ body {
 .fx-right {
   opacity: 0;
   transform: translateX(60px) scale(0.95);
-  transition: opacity 0.5s cubic-bezier(0.22,1,0.36,1),
-              transform 0.8s cubic-bezier(0.22,1,0.36,1);
+  transition: opacity 0.25s cubic-bezier(0.22,1,0.36,1),
+              transform 0.4s cubic-bezier(0.22,1,0.36,1);
 }
 .fx-right.vis { opacity: 1; transform: translateX(0) scale(1); }
 
@@ -446,8 +446,8 @@ body {
 .fx-zoom {
   opacity: 0;
   transform: scale(0.78);
-  transition: opacity 0.75s ease,
-              transform 0.75s cubic-bezier(0.34,1.56,0.64,1);
+  transition: opacity 0.35s ease,
+              transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
 }
 .fx-zoom.vis { opacity: 1; transform: scale(1); }
 
@@ -456,20 +456,20 @@ body {
   opacity: 0;
   transform: rotateX(40deg) translateY(-20px);
   transform-origin: top center;
-  transition: opacity 0.7s ease,
-              transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  transition: opacity 0.32s ease,
+              transform 0.32s cubic-bezier(0.22,1,0.36,1);
   perspective: 600px;
 }
 .fx-flip.vis { opacity: 1; transform: rotateX(0deg) translateY(0); }
 
 /* Delays para fx- */
 .fx-d1 { transition-delay: 0s; }
-.fx-d2 { transition-delay: 0.1s; }
-.fx-d3 { transition-delay: 0.18s; }
-.fx-d4 { transition-delay: 0.26s; }
-.fx-d5 { transition-delay: 0.34s; }
-.fx-d6 { transition-delay: 0.42s; }
-.fx-d7 { transition-delay: 0.50s; }
+.fx-d2 { transition-delay: 0.05s; }
+.fx-d3 { transition-delay: 0.09s; }
+.fx-d4 { transition-delay: 0.13s; }
+.fx-d5 { transition-delay: 0.17s; }
+.fx-d6 { transition-delay: 0.21s; }
+.fx-d7 { transition-delay: 0.25s; }
 
 .sb-pre {
   font-family: 'Cinzel', serif;
@@ -534,7 +534,7 @@ body {
   position: absolute; inset: 12px; z-index: 5;
   border: 1px solid rgba(201,161,85,0.28);
   pointer-events: none; opacity: 0;
-  transition: opacity 0.7s ease 1.2s;
+  transition: opacity 0.4s ease 0.5s;
 }
 .photo-panel.vis .p-border { opacity: 1; }
 
@@ -595,15 +595,15 @@ body {
 /* Cuando se activa .vis: cada tira se desliza hacia fuera */
 /* Tira 1 → sale por la derecha */
 .photo-panel.fx-wave-lr.vis .s1 {
-  animation: stripeRight 0.8s cubic-bezier(0.76,0,0.18,1) 0s forwards;
+  animation: stripeRight 0.4s cubic-bezier(0.76,0,0.18,1) 0s forwards;
 }
 /* Tira 2 → sale por la izquierda */
 .photo-panel.fx-wave-lr.vis .s2 {
-  animation: stripeLeft  1.3s cubic-bezier(0.76,0,0.18,1) 1.1s forwards;
+  animation: stripeLeft  0.4s cubic-bezier(0.76,0,0.18,1) 0.42s forwards;
 }
 /* Tira 3 → sale por la derecha */
 .photo-panel.fx-wave-lr.vis .s3 {
-  animation: stripeRight 0.8s cubic-bezier(0.76,0,0.18,1) 1.3s forwards;
+  animation: stripeRight 0.4s cubic-bezier(0.76,0,0.18,1) 0.82s forwards;
 }
 
 @keyframes stripeRight {
@@ -630,13 +630,13 @@ body {
 .photo-panel.fx-wave-lr .sheen3 { top: 66%; height: 38%; }
 
 .photo-panel.fx-wave-lr.vis .sheen1 {
-  animation: sheenR 1.3s cubic-bezier(0.4,0,0.6,1) 0s forwards;
+  animation: sheenR 0.4s cubic-bezier(0.4,0,0.6,1) 0s forwards;
 }
 .photo-panel.fx-wave-lr.vis .sheen2 {
-  animation: sheenL 1.3s cubic-bezier(0.4,0,0.6,1) 1.1s forwards;
+  animation: sheenL 0.4s cubic-bezier(0.4,0,0.6,1) 0.42s forwards;
 }
 .photo-panel.fx-wave-lr.vis .sheen3 {
-  animation: sheenR 1.3s cubic-bezier(0.4,0,0.6,1) 2.2s forwards;
+  animation: sheenR 0.4s cubic-bezier(0.4,0,0.6,1) 0.82s forwards;
 }
 @keyframes sheenR {
   0%   { opacity: 1; left: -70px; }
@@ -659,8 +659,8 @@ body {
   object-fit: cover;
   filter: blur(22px) saturate(0.35) brightness(0.82);
   transform: scale(1.14) translateY(4%);
-  transition: filter 3.5s cubic-bezier(0.4,0,0.2,1),
-              transform 3.5s cubic-bezier(0.4,0,0.2,1);
+  transition: filter 0.9s cubic-bezier(0.4,0,0.2,1),
+              transform 0.9s cubic-bezier(0.4,0,0.2,1);
   will-change: filter, transform;
 }
 .photo-panel.fx-blur.vis img {
@@ -674,7 +674,7 @@ body {
     rgba(200,218,245,0.55) 100%);
   mix-blend-mode: soft-light;
   opacity: 1;
-  transition: opacity 3.5s ease;
+  transition: opacity 0.9s ease;
 }
 .photo-panel.fx-blur.vis .p-overlay { opacity: 0; }
 
@@ -684,7 +684,7 @@ body {
 .photo-panel.fx-wave-tb .img-clip {
   position: absolute; inset: 0;
   clip-path: inset(0 0 100% 0 round 0px);
-  transition: clip-path 1.6s cubic-bezier(0.76,0,0.24,1);
+  transition: clip-path 0.7s cubic-bezier(0.76,0,0.24,1);
   will-change: clip-path;
 }
 .photo-panel.fx-wave-tb.vis .img-clip {
@@ -706,7 +706,7 @@ body {
     transparent 100%);
   z-index: 4; pointer-events: none;
   top: -70px;
-  transition: top 1.6s cubic-bezier(0.76,0,0.24,1);
+  transition: top 0.7s cubic-bezier(0.76,0,0.24,1);
 }
 .photo-panel.fx-wave-tb.vis .wave-sheen { top: 108%; }
 
@@ -768,7 +768,7 @@ body {
   display: flex; align-items: flex-start;
   gap: 16px; margin-bottom: 28px;
   opacity: 0; transform: translateX(-14px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 .tl-item.vis { opacity: 1; transform: none; }
 .tl-dot {
@@ -1901,7 +1901,7 @@ function abrirInvitacion() {
     // Activa el texto del hero (tras la 3ª franja: ~3.3s)
     setTimeout(() => {
       document.getElementById('hero-text-inner').classList.add('vis');
-    }, 1900);
+    }, 800);
     // Inicia parallax
     requestAnimationFrame(photoParallax);
   }, 950);
@@ -2167,24 +2167,67 @@ function enviarRSVP() {
   /* ── Google Apps Script Web App ──
      Sustituye GOOGLE_SCRIPT_URL por tu URL publicada */
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwcw--MRqOZ44BNgm1ncqtBJI43evwMSWFj1SUD-WeDNwZ-Ho0z59TW2V1HPD9pDtJo/exec';
-  if (GOOGLE_SCRIPT_URL == 'https://script.google.com/macros/s/AKfycbwcw--MRqOZ44BNgm1ncqtBJI43evwMSWFj1SUD-WeDNwZ-Ho0z59TW2V1HPD9pDtJo/exec') {
-    fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(datos)
-    }).catch(() => {});
-  }
 
-  /* Confirmación visual */
-  document.getElementById('rsvp-wrap').style.display = 'none';
-  const ok = document.getElementById('rsvp-ok');
-  ok.style.display = 'block';
-  if (!esSi) {
-    document.getElementById('rsvp-ok-title').textContent = 'Lo sentiremos mucho';
-    document.getElementById('rsvp-ok-msg').textContent   =
-      'Gracias por avisarnos. Te llevaremos en el corazón ese día.';
-  }
-  ok.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  /* Bloquear botón y mostrar spinner */
+  const btnEnviar = document.querySelector('#rsvp-' + (esSi ? 'si' : 'no') + '-wrap .btn-enviar');
+  const textoOriginal = btnEnviar.textContent;
+  btnEnviar.disabled = true;
+  btnEnviar.textContent = '⏳ Enviando…';
+  btnEnviar.style.opacity = '0.7';
+
+  /* Con no-cors no podemos leer la respuesta HTTP, pero sí detectar
+     errores de red (sin conexión, timeout, DNS, etc.).
+     Si fetch lanza → error de red seguro → avisamos y dejamos reintentar.
+     Si fetch resuelve → el request llegó al servidor (Apps Script lo procesó). */
+  const controller = new AbortController();
+  const timeout    = setTimeout(() => controller.abort(), 12000); // 12s timeout
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method:  'POST',
+    mode:    'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(datos),
+    signal:  controller.signal
+  })
+  .then(() => {
+    clearTimeout(timeout);
+    /* Éxito: el fetch llegó al servidor */
+    document.getElementById('rsvp-wrap').style.display = 'none';
+    const ok = document.getElementById('rsvp-ok');
+    ok.style.display = 'block';
+    if (!esSi) {
+      document.getElementById('rsvp-ok-title').textContent = 'Lo sentiremos mucho';
+      document.getElementById('rsvp-ok-msg').textContent   =
+        'Gracias por avisarnos. Te llevaremos en el corazón ese día.';
+    }
+    ok.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  })
+  .catch(err => {
+    clearTimeout(timeout);
+    /* Error de red o timeout — restaurar botón y avisar */
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = textoOriginal;
+    btnEnviar.style.opacity = '';
+
+    const esTimeout = err.name === 'AbortError';
+    const msg = esTimeout
+      ? '⏱️ La conexión tardó demasiado. Comprueba tu wifi o datos e inténtalo de nuevo.'
+      : '📵 No se ha podido enviar. Comprueba tu conexión e inténtalo de nuevo.';
+
+    /* Mostramos el error en el propio formulario, sin alert() intrusivo */
+    let errorEl = document.getElementById('rsvp-net-error');
+    if (!errorEl) {
+      errorEl = document.createElement('div');
+      errorEl.id = 'rsvp-net-error';
+      errorEl.style.cssText =
+        'margin-top:12px;padding:12px 14px;border-radius:8px;' +
+        'background:rgba(220,80,60,0.08);border:1px solid rgba(220,80,60,0.25);' +
+        'font-size:12px;font-weight:300;color:#b03020;line-height:1.6;text-align:center;';
+      btnEnviar.insertAdjacentElement('afterend', errorEl);
+    }
+    errorEl.textContent = msg;
+    errorEl.style.display = 'block';
+  });
 }
 /* ══════════════════════════════════
    CARRUSEL
