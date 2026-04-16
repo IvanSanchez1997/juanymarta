@@ -1684,6 +1684,7 @@ footer::before {
         </div>
 
         <!-- NIÑOS -->
+        <!--
         <div class="rsvp-step">
           <div class="rsvp-pregunta">Número de niños que asistirán</div>
           <div class="form-group" style="margin-top:10px;">
@@ -1703,6 +1704,7 @@ footer::before {
           </div>
           <div id="nc"></div>
         </div>
+        -->
 
         <!-- COMENTARIOS -->
         <div class="rsvp-step">
@@ -1739,6 +1741,7 @@ footer::before {
         </div>
 
         <!-- NIÑOS -->
+        <!--
         <div class="rsvp-step">
           <div class="rsvp-pregunta">Número de niños en el grupo</div>
           <div class="form-group" style="margin-top:10px;">
@@ -1758,7 +1761,7 @@ footer::before {
           </div>
           <div id="ncn"></div>
         </div>
-
+        -->
         <!-- COMENTARIOS -->
         <div class="rsvp-step">
           <div class="rsvp-pregunta">Comentarios <span class="rsvp-opcional">(opcional)</span></div>
@@ -2043,7 +2046,8 @@ function _generarAdultos(containerId, n, conAlergias) {
 }
 
 /* ── Genera tarjetas de niños ── */
-function _generarNinos(containerId, n, conAlergias) {
+
+/*function _generarNinos(containerId, n, conAlergias) {
   n = parseInt(n);
   const wrap = document.getElementById(containerId);
   wrap.innerHTML = '';
@@ -2066,12 +2070,12 @@ function _generarNinos(containerId, n, conAlergias) {
         '</div>' + alergiaField +
       '</div>';
   }
-}
+}*/
 
 function generarAdultos(n)    { _generarAdultos('ac',  n, true);  }
-function generarNinos(n)      { _generarNinos('nc',    n, true);  }
+/*function generarNinos(n)      { _generarNinos('nc',    n, true);  }*/
 function generarAdultosNo(n)  { _generarAdultos('acn', n, false); }
-function generarNinosNo(n)    { _generarNinos('ncn',   n, false); }
+/*function generarNinosNo(n)    { _generarNinos('ncn',   n, false); }*/
 
 /* ── Selección Sí / No ── */
 function rsvpAsistir(v) {
@@ -2100,18 +2104,18 @@ function enviarRSVP() {
   const prefA   = esSi ? 'ac'  : 'acn';
   const prefN   = esSi ? 'nc'  : 'ncn';
   const selectA = document.getElementById(esSi ? 'f-adultos' : 'f-adultos-no');
-  const selectN = document.getElementById(esSi ? 'f-ninos'   : 'f-ninos-no');
+  /*const selectN = document.getElementById(esSi ? 'f-ninos'   : 'f-ninos-no');*/
   const msgEl   = document.getElementById(esSi ? 'f-mensaje' : 'f-mensaje-no');
 
   const totalAdultos = parseInt(selectA.value);
-  const totalNinos   = parseInt(selectN.value);
+  /*const totalNinos   = parseInt(selectN.value);*/
 
   if (esSi && totalAdultos < 1) { alert('Indica al menos 1 adulto.'); return; }
 
   const datos = {
     asiste:       esSi ? 'Sí' : 'No',
     totalAdultos: totalAdultos,
-    totalNinos:   totalNinos,
+    /*totalNinos:   totalNinos,*/
   };
 
   /* Adultos */
@@ -2125,7 +2129,7 @@ function enviarRSVP() {
   }
 
   /* Niños */
-  for (let i = 1; i <= totalNinos; i++) {
+  /*for (let i = 1; i <= totalNinos; i++) {
     const nEl = document.getElementById(prefN + '_n' + i + '_n');
     const eEl = document.getElementById(prefN + '_n' + i + '_e');
     const aEl = esSi ? document.getElementById(prefN + '_n' + i + '_al') : null;
@@ -2134,7 +2138,7 @@ function enviarRSVP() {
     datos['nino' + i + '_nombre']  = nombre;
     datos['nino' + i + '_edad']    = eEl ? parseInt(eEl.value) : 0;
     datos['nino' + i + '_alergia'] = aEl ? (san(aEl.value) || 'Ninguna') : '—';
-  }
+  }*/
 
   datos.comentarios = msgEl ? san(msgEl.value) : '';
   datos.timestamp   = new Date().toISOString();
@@ -2155,7 +2159,7 @@ function enviarRSVP() {
      Si fetch lanza → error de red seguro → avisamos y dejamos reintentar.
      Si fetch resuelve → el request llegó al servidor (Apps Script lo procesó). */
   const controller = new AbortController();
-  const timeout    = setTimeout(() => controller.abort(), 3000); // 3s timeout
+  const timeout    = setTimeout(() => controller.abort(), 5000); // 5s timeout
 
   fetch(GOOGLE_SCRIPT_URL, {
     method:  'POST',
@@ -2186,7 +2190,7 @@ function enviarRSVP() {
 
     const esTimeout = err.name === 'AbortError';
     const msg = esTimeout
-      ? '⏱️ La conexión tardó demasiado. Comprueba tu wifi o datos e inténtalo de nuevo.'
+      ? '⏱️ Ha tardado un pelín en enviarse los datos. Recomendamos que confirmen con los novios si les ha llegado la respuesta.'
       : '📵 No se ha podido enviar. Comprueba tu conexión e inténtalo de nuevo.';
 
     /* Mostramos el error en el propio formulario, sin alert() intrusivo */
