@@ -1086,6 +1086,30 @@ footer::before {
 .f-heart { font-size: 16px; color: var(--gold); opacity: 0.45; margin: 18px 0 8px; position: relative; z-index: 1; }
 .f-gracias { font-family: 'Great Vibes', cursive; font-size: 30px; color: var(--gold); opacity: 0.65; position: relative; z-index: 1; }
 
+/* ── RADIO BUTTONS PARA AUTOBÚS ── */
+input[type="radio"][name^="autobus_a"] {
+  accent-color: var(--gold);
+  cursor: pointer;
+  width: 14px !important;
+  height: 14px !important;
+}
+
+input[type="radio"][name^="autobus_a"]:checked {
+  background-color: var(--gold) !important;
+}
+
+/* Estilo del contenedor del label cuando radio está checked */
+input[type="radio"][name^="autobus_a"]:checked + label[data-bus],
+label[data-bus] {
+  transition: all 0.2s ease;
+}
+
+input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
+  background: rgba(201,161,85,0.2);
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(26px); }
   to   { opacity: 1; transform: none; }
@@ -2035,12 +2059,19 @@ function _generarAdultos(containerId, n, conAlergias) {
       ? '<div class="form-group"><label>Alergias o intolerancias <span class="rsvp-opcional">(opcional)</span></label>' +
         '<input type="text" id="' + containerId + '_a' + i + '_al" placeholder="Gluten, lactosa, frutos secos…"></div>'
       : '';
+    const autobusField = conAlergias
+      ? '<div class="form-group"><label>¿Necesita autobús?</label>' +
+        '<div style="display:flex;gap:8px;margin-top:6px;">' +
+          '<label style="flex:1;cursor:pointer;display:flex;align-items:center;"><input type="radio" name="autobus_a' + i + '" value="si" style="width:12px;height:12px;margin-right:6px;cursor:pointer;"> Sí</label>' +
+          '<label style="flex:1;cursor:pointer;display:flex;align-items:center;"><input type="radio" name="autobus_a' + i + '" value="no" style="width:12px;height:12px;margin-right:6px;cursor:pointer;"> No</label>' +
+        '</div></div>'
+      : '';
     wrap.innerHTML +=
       '<div class="persona-card">' +
         '<div class="persona-card-title">' + label + '</div>' +
         '<div class="form-group"><label>Nombre completo</label>' +
           '<input type="text" id="' + containerId + '_a' + i + '_n" placeholder="Nombre y apellidos">' +
-        '</div>' + alergiaField +
+        '</div>' + alergiaField + autobusField +
       '</div>';
   }
 }
@@ -2124,8 +2155,20 @@ function enviarRSVP() {
     const aEl = esSi ? document.getElementById(prefA + '_a' + i + '_al') : null;
     const nombre = nEl ? san(nEl.value) : '';
     if (!nombre) { alert('Escribe el nombre del adulto ' + i + '.'); return; }
+    
+    /* Recopilar autobús (solo si asiste) */
+    let autobusVal = '—';
+    if (esSi) {
+      const autobusChecked = document.querySelector('input[name="autobus_a' + i + '"]:checked');
+      if (!autobusChecked) { alert('Indica si el adulto ' + i + ' necesita autobús.'); return; }
+      autobusVal = autobusChecked.value === 'si' ? 'Sí' : 'No';
+    }
+    
     datos['adulto' + i + '_nombre']  = nombre;
     datos['adulto' + i + '_alergia'] = aEl ? (san(aEl.value) || 'Ninguna') : '—';
+    if (esSi) {
+      datos['adulto' + i + '_autobus'] = autobusVal;
+    }
   }
 
   /* Niños */
@@ -2254,6 +2297,43 @@ function enviarRSVP() {
 
   window.carouselMove = n => goTo(current + n);
 })();
+
+/* ══════════════════════════════════
+   ESTILO DINÁMICO PARA RADIOS DE AUTOBÚS
+══════════════════════════════════ */
+function initAutobusRadios() {
+  document.querySelectorAll('input[name^="autobus_a"]').forEach(radio => {
+    const label = radio.closest('label');
+    if (!label) return;
+    
+    /* Establecer estilo inicial */
+    function updateStyle() {
+      if (radio.checked) {
+        label.style.background = 'rgba(201,161,85,0.2)';
+        label.style.borderRadius = '6px';
+        label.style.padding = '4px 8px';
+        label.style.fontWeight = '500';
+      } else {
+        label.style.background = 'transparent';
+        label.style.padding = '0px';
+        label.style.fontWeight = 'normal';
+      }
+    }
+    
+    /* Actualizar al cambiar */
+    radio.addEventListener('change', updateStyle);
+    
+    /* Estilo inicial */
+    updateStyle();
+  });
+}
+
+/* Ejecutar cuando se generen adultos */
+const originalGenerarAdultos = _generarAdultos;
+_generarAdultos = function(containerId, n, conAlergias) {
+  originalGenerarAdultos.call(this, containerId, n, conAlergias);
+  setTimeout(initAutobusRadios, 100);
+};
 
 </script>
 </body>
