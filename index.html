@@ -1899,6 +1899,7 @@ function abrirInvitacion() {
   const cont = document.getElementById('contenido');
   cont.style.pointerEvents = 'all';
   setTimeout(() => {
+    window.scrollTo(0, 0);
     cont.classList.add('visible');
     document.getElementById('portada').style.display = 'none';
     document.getElementById('music-btn').classList.add('show');
