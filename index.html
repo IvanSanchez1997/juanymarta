@@ -1090,15 +1090,17 @@ footer::before {
 .f-heart { font-size: 16px; color: var(--gold); opacity: 0.45; margin: 18px 0 8px; position: relative; z-index: 1; }
 .f-gracias { font-family: 'Great Vibes', cursive; font-size: 30px; color: var(--gold); opacity: 0.65; position: relative; z-index: 1; }
 
-/* ── RADIO BUTTONS PARA AUTOBÚS ── */
-input[type="radio"][name^="autobus_a"] {
+/* ── RADIO BUTTONS PARA AUTOBÚS Y MENÚ ── */
+input[type="radio"][name^="autobus_a"],
+input[type="radio"][name^="menu_a"] {
   accent-color: var(--gold);
   cursor: pointer;
   width: 14px !important;
   height: 14px !important;
 }
 
-input[type="radio"][name^="autobus_a"]:checked {
+input[type="radio"][name^="autobus_a"]:checked,
+input[type="radio"][name^="menu_a"]:checked {
   background-color: var(--gold) !important;
 }
 
@@ -2046,7 +2048,9 @@ setInterval(updateCountdown, 1000);
    RSVP — FORMULARIO DINÁMICO
    JSON enviado a Google Sheets:
    { asiste, totalAdultos, totalNinos,
-     adulto1_nombre, adulto1_alergia (solo si=sí)
+     adulto1_nombre, adulto1_alergia (solo si=sí),
+     adulto1_menu (solo si=sí, Carne/Pescado),
+     adulto1_autobus (solo si=sí, Sí/No),
      nino1_nombre, nino1_edad, nino1_alergia (solo si=sí)
      comentarios, timestamp }
 ══════════════════════════════════ */
@@ -2064,6 +2068,13 @@ function _generarAdultos(containerId, n, conAlergias) {
       ? '<div class="form-group"><label>Alergias o intolerancias <span class="rsvp-opcional">(opcional)</span></label>' +
         '<input type="text" id="' + containerId + '_a' + i + '_al" placeholder="Gluten, lactosa, frutos secos…"></div>'
       : '';
+    const menuField = conAlergias
+      ? '<div class="form-group"><label>Preferencia de menú</label>' +
+        '<div style="display:flex;gap:8px;margin-top:6px;">' +
+          '<label style="flex:1;cursor:pointer;display:flex;align-items:center;"><input type="radio" name="menu_a' + i + '" value="carne" style="width:12px;height:12px;margin-right:6px;cursor:pointer;"> 🥩 Carne</label>' +
+          '<label style="flex:1;cursor:pointer;display:flex;align-items:center;"><input type="radio" name="menu_a' + i + '" value="pescado" style="width:12px;height:12px;margin-right:6px;cursor:pointer;"> 🐟 Pescado</label>' +
+        '</div></div>'
+      : '';
     const autobusField = conAlergias
       ? '<div class="form-group"><label>¿Necesita autobús?</label>' +
         '<div style="display:flex;gap:8px;margin-top:6px;">' +
@@ -2076,7 +2087,7 @@ function _generarAdultos(containerId, n, conAlergias) {
         '<div class="persona-card-title">' + label + '</div>' +
         '<div class="form-group"><label>Nombre completo</label>' +
           '<input type="text" id="' + containerId + '_a' + i + '_n" placeholder="Nombre y apellidos">' +
-        '</div>' + alergiaField + autobusField +
+        '</div>' + alergiaField + menuField + autobusField +
       '</div>';
   }
 }
@@ -2168,11 +2179,20 @@ function enviarRSVP() {
       if (!autobusChecked) { alert('Indica si el adulto ' + i + ' necesita autobús.'); return; }
       autobusVal = autobusChecked.value === 'si' ? 'Sí' : 'No';
     }
+
+    /* Recopilar preferencia de menú (solo si asiste) */
+    let menuVal = '—';
+    if (esSi) {
+      const menuChecked = document.querySelector('input[name="menu_a' + i + '"]:checked');
+      if (!menuChecked) { alert('Indica la preferencia de menú del adulto ' + i + '.'); return; }
+      menuVal = menuChecked.value === 'carne' ? 'Carne' : 'Pescado';
+    }
     
     datos['adulto' + i + '_nombre']  = nombre;
     datos['adulto' + i + '_alergia'] = aEl ? (san(aEl.value) || 'Ninguna') : '—';
     if (esSi) {
       datos['adulto' + i + '_autobus'] = autobusVal;
+      datos['adulto' + i + '_menu'] = menuVal;
     }
   }
 
@@ -2307,22 +2327,26 @@ function enviarRSVP() {
    ESTILO DINÁMICO PARA RADIOS DE AUTOBÚS
 ══════════════════════════════════ */
 function initAutobusRadios() {
-  document.querySelectorAll('input[name^="autobus_a"]').forEach(radio => {
+  document.querySelectorAll('input[name^="autobus_a"], input[name^="menu_a"]').forEach(radio => {
     const label = radio.closest('label');
     if (!label) return;
     
-    /* Establecer estilo inicial */
+    /* Establecer estilo para todo el grupo */
     function updateStyle() {
-      if (radio.checked) {
-        label.style.background = 'rgba(201,161,85,0.2)';
-        label.style.borderRadius = '6px';
-        label.style.padding = '4px 8px';
-        label.style.fontWeight = '500';
-      } else {
-        label.style.background = 'transparent';
-        label.style.padding = '0px';
-        label.style.fontWeight = 'normal';
-      }
+      document.querySelectorAll('input[name="' + radio.name + '"]').forEach(r => {
+        const l = r.closest('label');
+        if (!l) return;
+        if (r.checked) {
+          l.style.background = 'rgba(201,161,85,0.2)';
+          l.style.borderRadius = '6px';
+          l.style.padding = '4px 8px';
+          l.style.fontWeight = '500';
+        } else {
+          l.style.background = 'transparent';
+          l.style.padding = '0px';
+          l.style.fontWeight = 'normal';
+        }
+      });
     }
     
     /* Actualizar al cambiar */
