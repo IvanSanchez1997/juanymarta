@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Novios · Juan & Marta</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Great+Vibes&family=Cinzel:wght@300;400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/tabulator-tables@6.5.2/dist/css/tabulator.min.css" rel="stylesheet">
+<style>
+:root {
+  --gold: #c9a155;
+  --gold-light: #e8d5a0;
+  --gold-pale: #f5edd8;
+  --cream: #fefcf8;
+  --text: #5a4535;
+  --text-light: #8a7060;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════
+   LOGIN GATE
+   ═══════════════════════════════════ */
+
+#login-gate {
+  position: fixed;
+  inset: 0;
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.login-box {
+  text-align: center;
+  padding: 48px 40px;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(201,161,85,0.2);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(201,161,85,0.08);
+  max-width: 380px;
+  width: 90%;
+}
+
+.login-box h1 {
+  font-family: 'Great Vibes', cursive;
+  font-size: 32px;
+  font-weight: 400;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.login-box .login-sub {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 28px;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--gold-light);
+  border-radius: 8px;
+  font-family: 'Jost', sans-serif;
+  font-size: 16px;
+  text-align: center;
+  letter-spacing: 6px;
+  color: var(--text);
+  background: rgba(255,255,255,0.7);
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.login-box input:focus {
+  border-color: var(--gold);
+}
+
+.login-box input::placeholder {
+  letter-spacing: 2px;
+  color: var(--text-light);
+  opacity: 0.5;
+}
+
+.login-box button {
+  margin-top: 16px;
+  padding: 12px 32px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.login-box button:hover { opacity: 0.85; }
+
+.login-error {
+  color: #c0392b;
+  font-size: 13px;
+  margin-top: 12px;
+  display: none;
+}
+
+.login-decor {
+  font-size: 24px;
+  margin-bottom: 12px;
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════════
+   PANEL
+   ═══════════════════════════════════ */
+
+#panel {
+  display: none;
+  min-height: 100vh;
+  padding: 0 20px 40px;
+}
+
+.panel-header {
+  text-align: center;
+  padding: 40px 0 24px;
+}
+
+.panel-header h1 {
+  font-family: 'Great Vibes', cursive;
+  font-size: 40px;
+  font-weight: 400;
+  color: var(--gold);
+}
+
+.panel-header .panel-sub {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+.panel-divider {
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 16px auto 0;
+}
+
+/* ═══════════════════════════════════
+   TOOLBAR
+   ═══════════════════════════════════ */
+
+.toolbar {
+  max-width: 1200px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px 14px 10px 36px;
+  border: 1px solid var(--gold-light);
+  border-radius: 8px;
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: rgba(255,255,255,0.7);
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-box input:focus { border-color: var(--gold); }
+
+.search-box::before {
+  content: "\1F50D";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.btn-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-toggle {
+  padding: 10px 18px;
+  border: 1px solid var(--gold-light);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.5);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.btn-toggle:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn-toggle.active {
+  background: var(--gold);
+  color: #fff;
+  border-color: var(--gold);
+}
+
+.btn-refresh {
+  padding: 10px 14px;
+  border: 1px solid var(--gold-light);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.5);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  line-height: 1;
+}
+
+.btn-refresh:hover {
+  border-color: var(--gold);
+}
+
+.btn-refresh.spinning {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* ═══════════════════════════════════
+   TABULATOR OVERRIDES
+   ═══════════════════════════════════ */
+
+.tabulator {
+  max-width: 1200px;
+  margin: 0 auto;
+  border: 1px solid rgba(201,161,85,0.2) !important;
+  border-radius: 10px !important;
+  overflow: hidden;
+  background: rgba(255,255,255,0.55) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: 'Jost', sans-serif !important;
+}
+
+.tabulator .tabulator-header {
+  background: var(--gold-pale) !important;
+  border-bottom: 1px solid var(--gold-light) !important;
+}
+
+.tabulator .tabulator-header .tabulator-col {
+  background: var(--gold-pale) !important;
+  border-right: 1px solid rgba(201,161,85,0.12) !important;
+}
+
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content {
+  padding: 8px 10px !important;
+}
+
+.tabulator .tabulator-header .tabulator-col .tabulator-col-title {
+  font-family: 'Cinzel', serif !important;
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  color: var(--gold) !important;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-sortable .tabulator-col-title {
+  padding-right: 20px;
+}
+
+.tabulator .tabulator-header .tabulator-col .tabulator-arrow {
+  border-bottom-color: var(--gold) !important;
+}
+
+.tabulator .tabulator-header .tabulator-col .tabulator-arrow.arrow-desc {
+  border-top-color: var(--gold) !important;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-col-sorter {
+  background: var(--gold-pale) !important;
+}
+
+.tabulator .tabulator-header .tabulator-col .tabulator-header-filter input {
+  font-family: 'Jost', sans-serif !important;
+  font-size: 12px !important;
+  border: 1px solid rgba(201,161,85,0.25) !important;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+  background: rgba(255,255,255,0.8) !important;
+  color: var(--text) !important;
+  outline: none !important;
+}
+
+.tabulator .tabulator-header .tabulator-col .tabulator-header-filter input:focus {
+  border-color: var(--gold) !important;
+}
+
+.tabulator .tabulator-header .tabulator-col .tabulator-header-filter select {
+  font-family: 'Jost', sans-serif !important;
+  font-size: 12px !important;
+  border: 1px solid rgba(201,161,85,0.25) !important;
+  border-radius: 4px !important;
+  padding: 4px 6px !important;
+  background: rgba(255,255,255,0.8) !important;
+  color: var(--text) !important;
+  outline: none !important;
+}
+
+.tabulator .tabulator-tableholder {
+  background: transparent !important;
+}
+
+.tabulator .tabulator-row {
+  background: rgba(255,255,255,0.4) !important;
+  border-bottom: 1px solid rgba(201,161,85,0.08) !important;
+  min-height: 42px !important;
+}
+
+.tabulator .tabulator-row:nth-child(even) {
+  background: rgba(245,237,216,0.25) !important;
+}
+
+.tabulator .tabulator-row:hover {
+  background: rgba(201,161,85,0.08) !important;
+}
+
+.tabulator .tabulator-row .tabulator-cell {
+  border-right: 1px solid rgba(201,161,85,0.06) !important;
+  padding: 8px 10px !important;
+  font-size: 13px !important;
+  color: var(--text) !important;
+  border-color: transparent !important;
+}
+
+.tabulator .tabulator-row .tabulator-cell.tabulator-frozen {
+  background: inherit !important;
+}
+
+.tabulator .tabulator-row .tabulator-cell.col-nombre {
+  font-weight: 400;
+}
+
+.tabulator .tabulator-row .tabulator-cell.col-tipo {
+  font-family: 'Cinzel', serif;
+  font-size: 10px !important;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-light) !important;
+}
+
+.tabulator .tabulator-row .tabulator-cell.col-autobus-si {
+  color: #27ae60 !important;
+  font-weight: 400;
+}
+
+.tabulator .tabulator-row .tabulator-cell.col-autobus-no {
+  color: var(--text-light) !important;
+}
+
+.tabulator .tabulator-row .tabulator-cell.col-notas {
+  font-style: italic;
+  font-size: 12px !important;
+  color: var(--text-light) !important;
+  max-width: 250px;
+  white-space: normal !important;
+}
+
+.tabulator .tabulator-row .tabulator-cell.col-grupo {
+  font-family: 'Cinzel', serif;
+  font-size: 11px !important;
+  letter-spacing: 1px;
+  color: var(--gold) !important;
+}
+
+/* Group headers */
+.tabulator .tabulator-row.tabulator-group {
+  background: rgba(245,237,216,0.5) !important;
+  border-bottom: 1px solid rgba(201,161,85,0.15) !important;
+}
+
+.tabulator .tabulator-row.tabulator-group .tabulator-group-toggle {
+  color: var(--gold) !important;
+}
+
+.tabulator .tabulator-row.tabulator-group .tabulator-group-toggle .tabulator-arrow {
+  border-right-color: var(--gold) !important;
+}
+
+.tabulator .tabulator-row.tabulator-group:hover {
+  background: rgba(245,237,216,0.7) !important;
+}
+
+.tabulator .tabulator-row.tabulator-group-toggle {
+  cursor: pointer;
+}
+
+/* Footer */
+.tabulator .tabulator-footer {
+  background: var(--gold-pale) !important;
+  border-top: 1px solid var(--gold-light) !important;
+  padding: 8px 12px !important;
+}
+
+.tabulator .tabulator-footer .tabulator-page {
+  color: var(--text) !important;
+  border: 1px solid rgba(201,161,85,0.25) !important;
+  background: rgba(255,255,255,0.5) !important;
+}
+
+.tabulator .tabulator-footer .tabulator-page.active {
+  background: var(--gold) !important;
+  color: #fff !important;
+  border-color: var(--gold) !important;
+}
+
+.tabulator .tabulator-footer .tabulator-page-size {
+  font-family: 'Jost', sans-serif !important;
+  font-size: 12px !important;
+  color: var(--text-light) !important;
+}
+
+.tabulator .tabulator-footer .tabulator-page-of {
+  font-family: 'Jost', sans-serif !important;
+  font-size: 12px !important;
+  color: var(--text-light) !important;
+}
+
+/* Empty state */
+.tabulator .tabulator-placeholder {
+  background: transparent !important;
+}
+
+.tabulator .tabulator-placeholder .tabulator-placeholder-contents {
+  font-family: 'Cinzel', serif !important;
+  font-size: 13px !important;
+  color: var(--text-light) !important;
+  letter-spacing: 1px;
+}
+
+/* ═══════════════════════════════════
+   FOOTER / STATS
+   ═══════════════════════════════════ */
+
+.panel-footer {
+  max-width: 1200px;
+  margin: 16px auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.panel-footer .stat-count {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.panel-footer .stat-count strong {
+  color: var(--gold);
+  font-size: 16px;
+}
+
+.panel-footer .stat-refresh {
+  font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+}
+
+/* ═══════════════════════════════════
+   LOADING
+   ═══════════════════════════════════ */
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(254,252,248,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loading-overlay.hidden { display: none; }
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--gold-light);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-text {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+.error-msg {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 16px 20px;
+  background: rgba(192,57,43,0.08);
+  border: 1px solid rgba(192,57,43,0.2);
+  border-radius: 8px;
+  color: #c0392b;
+  font-size: 13px;
+  text-align: center;
+  display: none;
+}
+
+.error-msg.visible { display: block; }
+
+/* ═══════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .panel-header { padding: 24px 0 16px; }
+  .panel-header h1 { font-size: 30px; }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-group {
+    justify-content: center;
+  }
+
+  .panel-footer {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .tabulator .tabulator-header .tabulator-col .tabulator-col-title {
+    font-size: 9px !important;
+  }
+
+  .tabulator .tabulator-row .tabulator-cell {
+    font-size: 12px !important;
+    padding: 6px 8px !important;
+  }
+
+  .tabulator .tabulator-row .tabulator-cell.col-notas {
+    max-width: 150px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .tabulator {
+    max-width: 1400px;
+  }
+  .toolbar, .panel-footer {
+    max-width: 1400px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     LOGIN GATE
+     ═══════════════════════════════════ -->
+<div id="login-gate">
+  <div class="login-box">
+    <div class="login-decor">&#10022;</div>
+    <h1>Panel Novios</h1>
+    <div class="login-sub">Juan &amp; Marta</div>
+    <input type="password" id="pass-input" placeholder="Contraseña" autocomplete="off">
+    <button onclick="verificarPass()">Entrar</button>
+    <div class="login-error" id="login-error">Contraseña incorrecta</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     LOADING
+     ═══════════════════════════════════ -->
+<div class="loading-overlay hidden" id="loading">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Cargando datos...</div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANEL
+     ═══════════════════════════════════ -->
+<div id="panel">
+  <div class="panel-header">
+    <h1>Panel Novios</h1>
+    <div class="panel-sub">Listado de asistentes</div>
+    <div class="panel-divider"></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <input type="text" id="buscador" placeholder="Buscar invitado...">
+    </div>
+    <div class="btn-group">
+      <button class="btn-toggle" id="btn-grupo" onclick="toggleGrupo()">Agrupar por familia</button>
+      <button class="btn-refresh" id="btn-refresh" onclick="refrescarManual()" title="Refrescar datos">&#8635;</button>
+    </div>
+  </div>
+
+  <div class="error-msg" id="error-msg"></div>
+
+  <div id="tabla"></div>
+
+  <div class="panel-footer">
+    <div class="stat-count"><strong id="count">0</strong> asistentes</div>
+    <div class="stat-refresh">Última actualización: <span id="timestamp">--:--</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCRIPTS
+     ═══════════════════════════════════ -->
+<script src="https://unpkg.com/tabulator-tables@6.5.2/dist/js/tabulator.min.js"></script>
+<script>
+(function() {
+  "use strict";
+
+  /* ─── Config ─── */
+  var CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR3jhpY7nKehsN_oW2UYvim7MylDwfaKXfXxwIIBRfd-wNqrzxBmZf3cul1D_rgy61gXEKzCe3ihCt-/pub?gid=1097390613&single=true&output=csv";
+  var PASS = "1110";
+  var REFRESH_MS = 60000;
+
+  var table = null;
+  var agrupando = false;
+  var refreshTimer = null;
+  var cargadoInicialmente = false;
+
+  /* ─── Login ─── */
+  window.verificarPass = function() {
+    var input = document.getElementById("pass-input");
+    var val = input.value.trim();
+    if (val === PASS) {
+      document.getElementById("login-gate").style.display = "none";
+      document.getElementById("panel").style.display = "block";
+      document.getElementById("loading").classList.remove("hidden");
+      init();
+    } else {
+      document.getElementById("login-error").style.display = "block";
+      input.value = "";
+      input.focus();
+    }
+  };
+
+  document.getElementById("pass-input").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") verificarPass();
+  });
+
+  /* ─── Init ─── */
+  function init() {
+    initTable();
+    fetchCSV();
+    refreshTimer = setInterval(fetchCSV, REFRESH_MS);
+  }
+
+  /* ─── CSV Parser ─── */
+  function parseCSV(text) {
+    var lines = [];
+    var rows = [];
+    var current = "";
+    var inQuote = false;
+
+    for (var i = 0; i < text.length; i++) {
+      var ch = text[i];
+      if (inQuote) {
+        if (ch === '"') {
+          if (i + 1 < text.length && text[i + 1] === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuote = false;
+          }
+        } else {
+          current += ch;
+        }
+      } else {
+        if (ch === '"') {
+          inQuote = true;
+        } else if (ch === ',') {
+          lines.push(current);
+          current = "";
+        } else if (ch === '\n' || ch === '\r') {
+          if (ch === '\r' && i + 1 < text.length && text[i + 1] === '\n') i++;
+          lines.push(current);
+          current = "";
+          if (lines.length > 0) rows.push(lines);
+          lines = [];
+        } else {
+          current += ch;
+        }
+      }
+    }
+    if (current !== "" || lines.length > 0) {
+      lines.push(current);
+      rows.push(lines);
+    }
+
+    if (rows.length < 2) return [];
+
+    var headers = rows[0];
+    headers = headers.map(function(h) {
+      return h.replace(/^\uFEFF/, "");
+    });
+    var data = [];
+    for (var r = 1; r < rows.length; r++) {
+      var row = rows[r];
+      if (row.length < 2) continue;
+      var hasName = false;
+      for (var h = 0; h < row.length; h++) {
+        if (row[h] && row[h].trim() !== "") { hasName = true; break; }
+      }
+      if (!hasName) continue;
+
+      var obj = {};
+      for (var h = 0; h < headers.length; h++) {
+        var key = headers[h].trim().toLowerCase()
+          .replace(/\s+/g, "_")
+          .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        obj[key] = (row[h] || "").trim();
+      }
+      data.push(obj);
+    }
+    return data;
+  }
+
+  /* ─── Fetch ─── */
+  function fetchCSV() {
+    var loading = document.getElementById("loading");
+    var isError = document.getElementById("error-msg");
+    var btn = document.getElementById("btn-refresh");
+
+    if (!table) loading.classList.remove("hidden");
+    btn.classList.add("spinning");
+    isError.classList.remove("visible");
+
+    return fetch(CSV_URL + "&t=" + Date.now())
+      .then(function(res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.text();
+      })
+      .then(function(text) {
+        var data = parseCSV(text);
+        if (table) {
+          if (cargadoInicialmente) {
+            table.replaceData(data);
+          } else {
+            table.setData(data);
+            cargadoInicialmente = true;
+          }
+        }
+        updateTimestamp();
+        btn.classList.remove("spinning");
+        loading.classList.add("hidden");
+      })
+      .catch(function(err) {
+        btn.classList.remove("spinning");
+        loading.classList.add("hidden");
+        isError.textContent = "Error al cargar datos: " + err.message;
+        isError.classList.add("visible");
+      });
+  }
+
+  /* ─── Table ─── */
+  function initTable() {
+    table = new Tabulator("#tabla", {
+      data: [],
+      layout: "fitColumns",
+      responsiveLayout: "collapse",
+      placeholder: "No hay datos disponibles",
+      height: "calc(100vh - 260px)",
+      pagination: true,
+      paginationSize: 25,
+      paginationSizeSelector: [25, 50, 100, true],
+      movableColumns: true,
+      initialSort: [{ column: "familia_/_grupo", dir: "asc" }],
+      columns: [
+        { title: "NOMBRE INVITADO", field: "nombre_invitado", headerFilter: "input", width: 220, formatter: function(cell) {
+          return cell.getValue() || "";
+        }},
+        { title: "TIPO", field: "tipo", headerFilter: "select", width: 100, formatter: function(cell) {
+          return cell.getValue() || "";
+        }},
+        { title: "ALERGIAS", field: "alergias", headerFilter: "input", width: 180, formatter: function(cell) {
+          return cell.getValue() || "";
+        }},
+        { title: "MENÚ", field: "menu", headerFilter: "select", width: 100, formatter: function(cell) {
+          return cell.getValue() || "";
+        }},
+        { title: "AUTOBÚS", field: "autobus", headerFilter: "select", width: 100, formatter: function(cell) {
+          var v = cell.getValue() || "";
+          var el = cell.getElement();
+          if (v.toLowerCase() === "sí") {
+            el.classList.add("col-autobus-si");
+          } else {
+            el.classList.add("col-autobus-no");
+          }
+          return v;
+        }},
+        { title: "FAMILIA / GRUPO", field: "familia_/_grupo", headerFilter: "input", width: 130, formatter: function(cell) {
+          return cell.getValue() || "";
+        }},
+        { title: "NOTAS", field: "notas", headerFilter: "input", minWidth: 150, formatter: function(cell) {
+          var v = cell.getValue() || "";
+          cell.getElement().classList.add("col-notas");
+          return v;
+        }}
+      ],
+      dataLoaded: function() {
+        updateStats(this.getDataCount("active"));
+      },
+      dataFiltered: function(filters, rows) {
+        updateStats(rows.length);
+      },
+      dataSorted: function(sorters, rows) {
+        updateStats(rows.length);
+      }
+    });
+
+    document.getElementById("buscador").addEventListener("input", function(e) {
+      var val = e.target.value.toLowerCase();
+      if (val === "") {
+        table.clearFilter();
+      } else {
+        table.setFilter({
+          mode: "or",
+          children: [
+            { field: "nombre_invitado", type: "like", value: val },
+            { field: "alergias", type: "like", value: val },
+            { field: "notas", type: "like", value: val },
+            { field: "familia_/_grupo", type: "like", value: val },
+            { field: "tipo", type: "like", value: val },
+            { field: "menu", type: "like", value: val },
+            { field: "autobus", type: "like", value: val }
+          ]
+        });
+      }
+    });
+  }
+
+  /* ─── Grouping ─── */
+  window.toggleGrupo = function() {
+    agrupando = !agrupando;
+    var btn = document.getElementById("btn-grupo");
+    if (agrupando) {
+      table.setGroupBy("familia_/_grupo");
+      table.setGroupHeader(function(value) {
+        return "Familia " + (value || "—");
+      });
+      btn.classList.add("active");
+    } else {
+      table.setGroupBy(false);
+      btn.classList.remove("active");
+    }
+  };
+
+  /* ─── Manual refresh ─── */
+  window.refrescarManual = function() {
+    fetchCSV();
+  };
+
+  /* ─── Stats ─── */
+  function updateStats(n) {
+    document.getElementById("count").textContent = n;
+    updateTimestamp();
+  }
+
+  function updateTimestamp() {
+    var now = new Date();
+    var h = String(now.getHours()).padStart(2, "0");
+    var m = String(now.getMinutes()).padStart(2, "0");
+    document.getElementById("timestamp").textContent = h + ":" + m;
+  }
+
+})();
+</script>
+</body>
+</html>
