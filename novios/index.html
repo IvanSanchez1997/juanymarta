@@ -266,6 +266,62 @@ body {
 }
 
 /* ═══════════════════════════════════
+   CHIPS (filtros rápidos)
+   ═══════════════════════════════════ */
+
+.chips {
+  max-width: 1200px;
+  margin: 0 auto 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 8px 14px;
+  border: 1px solid var(--gold-light);
+  border-radius: 20px;
+  background: rgba(255,255,255,0.5);
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.25s;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.chip .chip-count {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  color: var(--gold);
+  background: var(--gold-pale);
+  border-radius: 10px;
+  padding: 1px 8px;
+  line-height: 1.5;
+}
+
+.chip:hover {
+  border-color: var(--gold);
+}
+
+.chip.active {
+  background: var(--gold);
+  color: #fff;
+  border-color: var(--gold);
+}
+
+.chip.active .chip-count {
+  background: rgba(255,255,255,0.92);
+  color: var(--gold);
+}
+
+.chip.zero {
+  opacity: 0.45;
+}
+
+/* ═══════════════════════════════════
    TABULATOR OVERRIDES
    ═══════════════════════════════════ */
 
@@ -576,6 +632,18 @@ body {
     justify-content: center;
   }
 
+  .chips {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+
+  .chip {
+    flex-shrink: 0;
+  }
+
   .panel-footer {
     flex-direction: column;
     gap: 4px;
@@ -592,21 +660,25 @@ body {
   }
 
   .tabulator .tabulator-row .tabulator-cell.col-notas {
-    max-width: 150px;
+    max-width: 260px;
   }
 
-  /* En móvil, la tabla se expande a altura natural y la página
-     hace scroll nativo (así el tacto desplaza la página, no la
-     tabla interna que no responde bien al touch). */
+  /* En móvil la tabla crece a altura natural (scroll vertical de la página)
+     y la tabla permite deslizar a los lados (scroll horizontal) para ver
+     y filtrar todas las columnas. */
   .tabulator {
     height: auto !important;
     max-height: none !important;
+    overflow: visible !important;
   }
 
   .tabulator .tabulator-tableholder {
     height: auto !important;
     max-height: none !important;
-    overflow: visible !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x pan-y !important;
   }
 
   .tabulator .tabulator-row {
@@ -670,6 +742,13 @@ body {
 
   <div class="error-msg" id="error-msg"></div>
 
+  <div class="chips" id="chips">
+    <button class="chip" data-key="autobus" onclick="toggleQuick('autobus')">En autobús <span class="chip-count">0</span></button>
+    <button class="chip" data-key="alergicos" onclick="toggleQuick('alergicos')">Alérgicos <span class="chip-count">0</span></button>
+    <button class="chip" data-key="carne" onclick="toggleQuick('carne')">Carne <span class="chip-count">0</span></button>
+    <button class="chip" data-key="pescado" onclick="toggleQuick('pescado')">Pescado <span class="chip-count">0</span></button>
+  </div>
+
   <div id="tabla"></div>
 
   <div class="panel-footer">
@@ -695,6 +774,22 @@ body {
   var refreshTimer = null;
   var cargadoInicialmente = false;
   var esMovil = window.matchMedia("(max-width: 768px)").matches;
+
+  var allData = [];
+  var quick = { autobus: false, alergicos: false, carne: false, pescado: false };
+  var contadores = { autobus: 0, alergicos: 0, carne: 0, pescado: 0 };
+
+  /* ─── Helpers ─── */
+  function norm(s) {
+    return String(s == null ? "" : s)
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase().trim();
+  }
+
+  function esAlergico(r) {
+    var v = norm(r.alergias);
+    return v !== "" && ["ninguna", "nada", "no", "-", "—"].indexOf(v) === -1;
+  }
 
   /* ─── Login ─── */
   window.verificarPass = function() {
@@ -809,14 +904,14 @@ body {
         return res.text();
       })
       .then(function(text) {
-        var data = parseCSV(text);
-        if (table) {
-          if (cargadoInicialmente) {
-            table.replaceData(data);
-          } else {
-            table.setData(data);
-            cargadoInicialmente = true;
-          }
+        allData = parseCSV(text);
+        actualizarChips();
+        if (!table) return;
+        if (!cargadoInicialmente) {
+          table.setData(allData);
+          cargadoInicialmente = true;
+        } else {
+          aplicarFiltros();
         }
         updateTimestamp();
         btn.classList.remove("spinning");
@@ -834,8 +929,8 @@ body {
   function initTable() {
     table = new Tabulator("#tabla", {
       data: [],
-      layout: "fitColumns",
-      responsiveLayout: "collapse",
+      layout: esMovil ? "fitData" : "fitColumns",
+      responsiveLayout: esMovil ? false : "collapse",
       placeholder: "No hay datos disponibles",
       height: esMovil ? false : "calc(100vh - 260px)",
       locale: "es-es",
@@ -843,7 +938,7 @@ body {
       paginationSize: 25,
       paginationSizeSelector: [25, 50, 100, true],
       paginationCounter: "rows",
-      movableColumns: true,
+      movableColumns: !esMovil,
       initialSort: [{ column: "familia_/_grupo", dir: "asc" }],
       columns: [
         { title: "NOMBRE INVITADO", field: "nombre_invitado", headerFilter: "input", width: 220, formatter: function(cell) {
@@ -871,7 +966,7 @@ body {
         { title: "FAMILIA / GRUPO", field: "familia_/_grupo", headerFilter: "input", width: 130, formatter: function(cell) {
           return cell.getValue() || "";
         }},
-        { title: "NOTAS", field: "notas", headerFilter: "input", minWidth: 150, formatter: function(cell) {
+        { title: "NOTAS", field: "notas", headerFilter: "input", width: 280, maxWidth: 480, minWidth: 150, formatter: function(cell) {
           var v = cell.getValue() || "";
           cell.getElement().classList.add("col-notas");
           return v;
@@ -888,26 +983,76 @@ body {
       }
     });
 
-    document.getElementById("buscador").addEventListener("input", function(e) {
-      var val = e.target.value.toLowerCase();
-      if (val === "") {
-        table.clearFilter();
-      } else {
-        table.setFilter({
-          mode: "or",
-          children: [
-            { field: "nombre_invitado", type: "like", value: val },
-            { field: "alergias", type: "like", value: val },
-            { field: "notas", type: "like", value: val },
-            { field: "familia_/_grupo", type: "like", value: val },
-            { field: "tipo", type: "like", value: val },
-            { field: "menu", type: "like", value: val },
-            { field: "autobus", type: "like", value: val }
-          ]
-        });
-      }
-    });
+    document.getElementById("buscador").addEventListener("input", aplicarFiltros);
   }
+
+  /* ─── Filtros ─── */
+  function aplicarFiltros() {
+    if (!table) return;
+
+    var datos = allData.slice();
+    var q = norm(document.getElementById("buscador").value);
+
+    if (q) {
+      datos = datos.filter(function(r) {
+        var campos = [r.nombre_invitado, r.alergias, r.notas, r["familia_/_grupo"], r.tipo, r.menu, r.autobus];
+        return campos.some(function(c) {
+          return c && norm(c).indexOf(q) !== -1;
+        });
+      });
+    }
+
+    if (quick.autobus) {
+      datos = datos.filter(function(r) { return norm(r.autobus) === "si"; });
+    }
+    if (quick.carne) {
+      datos = datos.filter(function(r) { return norm(r.menu) === "carne"; });
+    }
+    if (quick.pescado) {
+      datos = datos.filter(function(r) { return norm(r.menu) === "pescado"; });
+    }
+    if (quick.alergicos) {
+      datos = datos.filter(esAlergico);
+    }
+
+    table.replaceData(datos);
+    actualizarChips();
+    updateTimestamp();
+  }
+
+  /* ─── Chips / filtros rápidos ─── */
+  function actualizarChips() {
+    contadores.autobus = allData.filter(function(r) { return norm(r.autobus) === "si"; }).length;
+    contadores.alergicos = allData.filter(esAlergico).length;
+    contadores.carne = allData.filter(function(r) { return norm(r.menu) === "carne"; }).length;
+    contadores.pescado = allData.filter(function(r) { return norm(r.menu) === "pescado"; }).length;
+
+    var chips = document.querySelectorAll(".chip");
+    for (var i = 0; i < chips.length; i++) {
+      var b = chips[i];
+      var k = b.getAttribute("data-key");
+      b.classList.toggle("active", !!quick[k]);
+      b.classList.toggle("zero", contadores[k] === 0);
+      var span = b.querySelector(".chip-count");
+      if (span) span.textContent = contadores[k];
+    }
+  }
+
+  window.toggleQuick = function(key) {
+    if (key === "carne" || key === "pescado") {
+      if (quick[key]) {
+        quick.carne = false;
+        quick.pescado = false;
+      } else {
+        quick.carne = false;
+        quick.pescado = false;
+        quick[key] = true;
+      }
+    } else {
+      quick[key] = !quick[key];
+    }
+    aplicarFiltros();
+  };
 
   /* ─── Grouping ─── */
   window.toggleGrupo = function() {
