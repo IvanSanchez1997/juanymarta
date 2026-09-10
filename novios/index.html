@@ -465,6 +465,18 @@ body {
   color: var(--text-light) !important;
 }
 
+.tabulator .tabulator-footer .tabulator-page-counter {
+  font-family: 'Cinzel', serif !important;
+  font-size: 11px !important;
+  letter-spacing: 1px !important;
+  color: var(--text-light) !important;
+}
+
+.tabulator .tabulator-footer .tabulator-page-counter strong {
+  color: var(--gold) !important;
+  font-size: 14px !important;
+}
+
 /* Empty state */
 .tabulator .tabulator-placeholder {
   background: transparent !important;
@@ -485,28 +497,16 @@ body {
   max-width: 1200px;
   margin: 16px auto 0;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-end;
   padding: 0 4px;
   font-size: 12px;
   color: var(--text-light);
 }
 
-.panel-footer .stat-count {
-  font-family: 'Cinzel', serif;
-  font-size: 11px;
-  letter-spacing: 1px;
-}
-
-.panel-footer .stat-count strong {
-  color: var(--gold);
-  font-size: 16px;
-}
-
 .panel-footer .stat-refresh {
   font-style: italic;
   font-family: 'Cormorant Garamond', serif;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 /* ═══════════════════════════════════
@@ -655,7 +655,6 @@ body {
   <div id="tabla"></div>
 
   <div class="panel-footer">
-    <div class="stat-count"><strong id="count">0</strong> asistentes</div>
     <div class="stat-refresh">Última actualización: <span id="timestamp">--:--</span></div>
   </div>
 </div>
@@ -820,9 +819,11 @@ body {
       responsiveLayout: "collapse",
       placeholder: "No hay datos disponibles",
       height: "calc(100vh - 260px)",
+      locale: "es-es",
       pagination: true,
       paginationSize: 25,
       paginationSizeSelector: [25, 50, 100, true],
+      paginationCounter: "rows",
       movableColumns: true,
       initialSort: [{ column: "familia_/_grupo", dir: "asc" }],
       columns: [
@@ -858,13 +859,13 @@ body {
         }}
       ],
       dataLoaded: function() {
-        updateStats(this.getDataCount("active"));
+        updateTimestamp();
       },
-      dataFiltered: function(filters, rows) {
-        updateStats(rows.length);
+      dataFiltered: function() {
+        updateTimestamp();
       },
-      dataSorted: function(sorters, rows) {
-        updateStats(rows.length);
+      dataSorted: function() {
+        updateTimestamp();
       }
     });
 
@@ -911,11 +912,6 @@ body {
   };
 
   /* ─── Stats ─── */
-  function updateStats(n) {
-    document.getElementById("count").textContent = n;
-    updateTimestamp();
-  }
-
   function updateTimestamp() {
     var now = new Date();
     var h = String(now.getHours()).padStart(2, "0");
