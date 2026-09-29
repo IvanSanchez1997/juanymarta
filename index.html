@@ -1202,20 +1202,78 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
   text-transform: uppercase; color: var(--gold);
   margin-bottom: 14px;
 }
+/* La tira es un carrusel HORIZONTAL a propósito: así el bloque
+   no crece hacia abajo por muchas fotos que haya, que es lo que
+   abultaba el index. El scroll lateral es nativo (swipe en móvil,
+   rueda o shift+rueda en escritorio) y no necesita JS.
+   El margen negativo se queda dentro del padding de 32px del
+   .story-block, así que su overflow:hidden no puede cortarlo. */
 .fotos-gal {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
   gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  /* contain evita que el swipe lateral dispare el gesto de
+     "atrás" del navegador y que la página se desplace en cadena */
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201,161,85,0.5) transparent;
+  margin: 0 -14px;
+  padding: 2px 14px 8px;
 }
+.fotos-gal::-webkit-scrollbar { height: 4px; }
+.fotos-gal::-webkit-scrollbar-track {
+  background: rgba(201,161,85,0.12); border-radius: 2px;
+}
+.fotos-gal::-webkit-scrollbar-thumb {
+  background: rgba(201,161,85,0.5); border-radius: 2px;
+}
+/* 103px es exactamente lo que ocupaba antes cada celda de la
+   rejilla de 3 columnas: 3 fotos caben justas (3×103 + 2×8 = 325
+   de 326px útiles) y a la 4ª ya desborda, que es cuando tiene
+   sentido mostrar la flecha de "desliza". */
 .fotos-item {
+  flex: 0 0 103px;
+  width: 103px; height: 103px;
   padding: 0;
   border: 1px solid rgba(201,161,85,0.3);
   border-radius: 8px;
   overflow: hidden;
   background: var(--gold-pale);
   cursor: pointer;
-  aspect-ratio: 1;
+  scroll-snap-align: start;
   animation: fadeUp 0.45s cubic-bezier(0.16,1,0.3,1) both;
+}
+.fotos-gal-hint {
+  margin-top: 6px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 13px;
+  color: var(--text-light); opacity: 0.75;
+}
+.fotos-gal-hint, .fotos-ver-todas { display: none; }
+.fotos-ver-todas.on { display: inline-block; }
+.fotos-gal-hint.on { display: block; }
+/* El botón de "ver galería completa" reutiliza el lenguaje visual
+   de .btn-enviar, pero en versión contorno para que no compita
+   con el botón de subir fotos, que es la acción principal. */
+.fotos-ver-todas {
+  margin-top: 18px;
+  padding: 12px 26px;
+  font-family: 'Cinzel', serif; font-size: 11px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  background: rgba(201,161,85,0.07);
+  border: 1.5px solid rgba(201,161,85,0.45);
+  border-radius: 30px;
+  transition: background 0.3s, border-color 0.3s, transform 0.3s;
+}
+.fotos-ver-todas:hover {
+  background: rgba(201,161,85,0.16);
+  border-color: var(--gold);
+  transform: translateY(-1px);
 }
 .fotos-item img {
   width: 100%; height: 100%;
@@ -1994,7 +2052,11 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
     <div class="fotos-gal-wrap">
       <div class="fotos-gal-title">La galería</div>
       <div class="fotos-gal" id="fotos-gal"></div>
+      <div class="fotos-gal-hint" id="fotos-gal-hint">← desliza para ver más →</div>
       <div class="fotos-vacio" id="fotos-vacio">Aún no hay fotos por aquí. ¡Sube la tuya y empieza la colección! ✨</div>
+      <!-- fotos.js le quita la clase "on" cuando hay muchas fotos.
+           En /galeria están todas, sin tira ni botón. -->
+      <a class="fotos-ver-todas" id="fotos-ver-todas" href="galeria/">✦ Ver galería completa ✦</a>
     </div>
   </div>
 

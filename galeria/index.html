@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1.0">
+<title>Vuestra galería · Juan & Marta</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=Great+Vibes&family=Cinzel:wght@300;400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --gold:       #c9a155;
+  --gold-light: #e8d5a0;
+  --gold-pale:  #f5edd8;
+  --cream:      #fefcf8;
+  --text:       #5a4535;
+  --text-light: #8a7060;
+}
+
+html { background: #ddd5cc; }
+
+body {
+  width: 390px;
+  margin: 0 auto;
+  background: var(--cream);
+  font-family: 'Jost', sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
+}
+
+@media (min-width: 500px) {
+  html { display: flex; justify-content: center; min-height: 100vh; }
+  body { box-shadow: 0 0 80px rgba(0,0,0,0.25); min-height: 100vh; }
+}
+
+/* ═══════════════════════════════════════════
+   CABECERA FIJA
+   ═══════════════════════════════════════════ */
+.gal-top {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  background: rgba(254,252,248,0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(201,161,85,0.25);
+}
+.gal-volver {
+  font-family: 'Cinzel', serif; font-size: 11px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold); text-decoration: none;
+  white-space: nowrap;
+}
+.gal-volver:hover { text-decoration: underline; }
+.gal-count {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 15px; color: var(--text-light);
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════
+   ENCABEZADO
+   ═══════════════════════════════════════════ */
+.gal-head { padding: 44px 20px 26px; text-align: center; }
+.gal-pre {
+  font-family: 'Cinzel', serif; font-size: 13px;
+  letter-spacing: 5px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 10px;
+}
+.gal-title {
+  font-family: 'Great Vibes', cursive; font-size: 46px;
+  line-height: 1.1; color: var(--text);
+}
+.gal-sub {
+  margin-top: 14px;
+  font-size: 15px; font-weight: 300; line-height: 1.9;
+  color: var(--text-light); max-width: 290px;
+  margin-left: auto; margin-right: auto;
+}
+
+/* ═══════════════════════════════════════════
+   REJILLA
+   Aquí sí van todas, en vertical y a dos
+   columnas: es la versión "completa" que el
+   index no puede permitirse por altura.
+   ═══════════════════════════════════════════ */
+.fotos-gal {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 0 20px 40px;
+}
+.fotos-item {
+  padding: 0;
+  border: 1px solid rgba(201,161,85,0.3);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--gold-pale);
+  cursor: pointer;
+  aspect-ratio: 1;
+  animation: fadeUp 0.45s cubic-bezier(0.16,1,0.3,1) both;
+  -webkit-tap-highlight-color: transparent;
+}
+.fotos-item img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform 0.3s;
+}
+.fotos-item:active img { transform: scale(1.04); }
+/* Fuera de la rejilla a propósito: fotosPintar() vacía el grid
+   con innerHTML, y el aviso se quedaría borrado. */
+.fotos-vacio {
+  padding: 0 20px 50px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 16px; line-height: 1.7;
+  color: var(--text-light); opacity: 0.75;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════
+   LIGHTBOX
+   Clases idénticas a las de index.html a
+   propósito: js/fotos.js las reutiliza tal
+   cual, así que el visor y los gestos de swipe
+   funcionan igual en las dos páginas.
+   ═══════════════════════════════════════════ */
+.fotos-lb {
+  position: fixed; inset: 0;
+  z-index: 999;
+  display: none;
+  align-items: center; justify-content: center;
+  background: rgba(40,32,24,0.94);
+}
+.fotos-lb.abierta { display: flex; }
+.fotos-lb img {
+  max-width: 88vw; max-height: 80vh;
+  border-radius: 6px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+.fotos-lb-close {
+  position: absolute; top: 14px; right: 16px;
+  background: none; border: none;
+  color: var(--gold-light);
+  font-size: 26px; line-height: 1;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.fotos-lb-nav {
+  position: absolute; top: 50%;
+  transform: translateY(-50%);
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(201,161,85,0.15);
+  border: 1px solid rgba(201,161,85,0.4);
+  color: var(--gold-light);
+  font-size: 22px; line-height: 1;
+  cursor: pointer;
+}
+.fotos-lb-prev { left: 10px; }
+.fotos-lb-next { right: 10px; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     CABECERA
+═══════════════════════════════════════════ -->
+<div class="gal-top">
+  <a class="gal-volver" href="../">&larr; Volver</a>
+  <span class="gal-count" id="fotos-count"></span>
+</div>
+
+<div class="gal-head">
+  <div class="gal-pre">Vuestras fotos</div>
+  <div class="gal-title">Nuestra colecci&oacute;n</div>
+  <div class="gal-sub">Todas las instantáneas que los invitados han ido dejando a lo largo del d&iacute;a. Gracias por compartirlas con nosotros.</div>
+</div>
+
+<!--
+  El id "fotos-gal-full" de la rejilla de abajo es lo que distingue
+  esta página de /index en fotosPintar(): allí pinta rejilla vertical
+  y aquí tira horizontal. El lightbox va ANTES del script porque
+  js/fotos.js lo lee en tiempo de parseo.
+-->
+<div class="fotos-gal" id="fotos-gal-full"></div>
+<div class="fotos-vacio" id="fotos-vacio">A&uacute;n no hay fotos por aqu&iacute;.</div>
+
+<div class="fotos-lb" id="fotos-lb" onclick="fotosLbCerrar()">
+  <button class="fotos-lb-nav fotos-lb-prev" type="button" onclick="event.stopPropagation();fotosLbMover(-1)" aria-label="Foto anterior">&lsaquo;</button>
+  <img id="fotos-lb-img" alt="Foto de la boda">
+  <button class="fotos-lb-nav fotos-lb-next" type="button" onclick="event.stopPropagation();fotosLbMover(1)" aria-label="Foto siguiente">&rsaquo;</button>
+  <button class="fotos-lb-close" type="button" onclick="event.stopPropagation();fotosLbCerrar()" aria-label="Cerrar">&times;</button>
+</div>
+
+<script data-goatcounter="https://ivan236.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+
+<script src="../js/fotos.js"></script>
+
+</body>
+</html>

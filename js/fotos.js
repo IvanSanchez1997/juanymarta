@@ -16,6 +16,12 @@ const FOTOS_PUBLIC_BASE = 'https://fotos-jm.binvita.es/';
 const FOTOS_MAX = 12;
 const FOTOS_REINTENTOS = 3;
 
+/* En el index las fotos van en una tira horizontal, así que solo
+   se ven unas 3. A partir de este número tiene sentido ofrecer el
+   botón de "ver galería completa" (página /galeria, donde sí van
+   todas en vertical). */
+const FOTOS_TIRA_MAX = 6;
+
 let fotosCola = [];
 let fotosSubiendo = false;
 let fotosItems = [];
@@ -229,24 +235,49 @@ async function fotosCargar() {
 }
 
 function fotosPintar() {
-  const gal = document.getElementById('fotos-gal');
+  // La misma función sirve para las dos páginas: en /index pinta la
+  // tira horizontal, en /galeria la rejilla vertical completa.
+  const gal = document.getElementById('fotos-gal') || document.getElementById('fotos-gal-full');
   const vacio = document.getElementById('fotos-vacio');
-  if (!gal || !vacio) return;
+  if (!gal) return;
+  const completa = gal.id === 'fotos-gal-full';
   gal.innerHTML = '';
-  vacio.style.display = fotosItems.length ? 'none' : '';
+  if (vacio) vacio.style.display = fotosItems.length ? 'none' : '';
+  // Solo en /galeria: "12 fotos" junto al enlace de volver.
+  const contador = document.getElementById('fotos-count');
+  if (contador) {
+    contador.textContent = fotosItems.length === 1
+      ? '1 foto'
+      : fotosItems.length + ' fotos';
+  }
   fotosItems.forEach((it, i) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'fotos-item';
     b.style.animationDelay = Math.min(i, 8) * 0.04 + 's';
     const img = document.createElement('img');
-    img.src = it.thumb;
+    // En la rejilla de /galeria la foto se ve a 150px, así que
+    // merece la pena cargar la versión grande y no la miniatura.
+    img.src = completa ? it.full : it.thumb;
     img.loading = 'lazy';
     img.alt = 'Foto de la boda';
     b.appendChild(img);
     b.addEventListener('click', () => fotosLbAbrir(i));
     gal.appendChild(b);
   });
+  fotosAjustarTira();
+}
+
+/* Solo existen en /index. El botón de la página completa aparece
+   cuando hay muchas fotos; la flecha de "desliza", cuando la tira
+   realmente desborda. En /galeria no hay ninguno de los dos. */
+function fotosAjustarTira() {
+  const btn = document.getElementById('fotos-ver-todas');
+  const hint = document.getElementById('fotos-gal-hint');
+  const gal = document.getElementById('fotos-gal');
+  if (!btn && !hint) return;
+  if (hint) hint.classList.toggle('on', !!gal && gal.scrollWidth > gal.clientWidth + 4);
+  if (btn) btn.classList.toggle('on', fotosItems.length > FOTOS_TIRA_MAX);
 }
 
 function fotosLbAbrir(i) {
@@ -290,5 +321,10 @@ if (fotosLbEl) {
     if (Math.abs(dx) > 45) fotosLbMover(dx < 0 ? 1 : -1);
   }, { passive: true });
 }
+
+// Al girar el móvil cambia cuántas fotos caben en la tira, así que
+// el botón y la flecha se recalculan. Se registra una sola vez, aquí,
+// y no dentro de fotosSubir().
+window.addEventListener('resize', fotosAjustarTira, { passive: true });
 
 fotosCargar();
