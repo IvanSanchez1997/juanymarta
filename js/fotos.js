@@ -16,6 +16,11 @@ const FOTOS_PUBLIC_BASE = 'https://fotos-jm.binvita.es/';
 const FOTOS_MAX = 12;
 const FOTOS_REINTENTOS = 3;
 
+/* Tope de fotos acumuladas en la cola cuando el invitado va
+   haciendo fotos seguidas. Es un guard contra un bucle absurdo,
+   no un límite real: en una boda se ficam bastante menos. */
+const FOTOS_COLA_MAX = 30;
+
 /* En el index las fotos van en una tira horizontal, así que solo
    se ven unas 3. A partir de este número tiene sentido ofrecer el
    botón de "ver galería completa" (página /galeria, donde sí van
@@ -58,7 +63,12 @@ function fotosEsperar(ms) {
   return new Promise(res => setTimeout(res, ms));
 }
 
-function fotosElegir(files) {
+/* auto: true cuando la foto viene de la cámara (el input que lleva
+   capture="environment"). En ese caso se sube sola, sin pasar por
+   el botón. Las elegidas en la galería del móvil siguen
+   necesitando el botón, porque ahí lo normal es elegir varias
+   junta y conviene verlas antes de mandarlas. */
+function fotosElegir(files, auto) {
   const sel = Array.from(files || []).filter(f => f.type && f.type.indexOf('image/') === 0);
   ['fotos-input', 'fotos-input-cam'].forEach(id => {
     const el = document.getElementById(id);
@@ -68,7 +78,26 @@ function fotosElegir(files) {
     fotosEstado('Solo se aceptan imágenes.', 'err');
     return;
   }
-  fotosCola = sel.slice(0, FOTOS_MAX);
+  const nuevas = sel.slice(0, FOTOS_MAX);
+  if (fotosSubiendo) {
+    // Hay una tanda en marcha: se añaden al final, no se sustituyen.
+    // Si se sustituyeran, las fotos intermedias de una ráfaga se
+    // perderían (quien hace tres seguidas solo conservaría la
+    // primera y la última).
+    fotosCola = fotosCola.concat(nuevas);
+    if (fotosCola.length > FOTOS_COLA_MAX) {
+      fotosCola = fotosCola.slice(0, FOTOS_COLA_MAX);
+      fotosEstado('Solo se guardan las ' + FOTOS_COLA_MAX + ' primeras de una ráfaga. Repite las que falten.', 'ok');
+    }
+  } else {
+    fotosCola = nuevas;
+  }
+  if (auto) {
+    // No se avisa de "X fotos listas para subir": se sube ya. El
+    // mensaje de progreso lo pone fotosSubir() a continuación.
+    fotosSubir();
+    return;
+  }
   if (sel.length > FOTOS_MAX) {
     fotosEstado('Máximo ' + FOTOS_MAX + ' fotos por vez: subiremos las ' + FOTOS_MAX + ' primeras.', 'ok');
   } else {
@@ -170,24 +199,33 @@ async function fotosSubir() {
   fotosSubiendo = true;
   const btn = document.getElementById('fotos-btn');
   if (btn) btn.disabled = true;
-  const total = fotosCola.length;
+  const cola = fotosCola;
+  // A partir de aquí la cola queda VACÍA y pasa a significar solo
+  // "pendientes": si el invitado hace otra foto o elige más
+  // mientras esta tanda sube, se acumulan aquí y se subirán en la
+  // ronda siguiente. Mezclar los dos papeles hacía que la foto en
+  // vuelo se volviera a subir.
+  fotosCola = [];
+  const total = cola.length;
   let subidas = 0;
   let fallidas = 0;
   let fallosFormato = 0;
   for (let i = 0; i < total; i++) {
     fotosEstado('Subiendo foto ' + (i + 1) + ' de ' + total + '…');
     try {
-      await fotosSubirUna(fotosCola[i]);
+      await fotosSubirUna(cola[i]);
       subidas++;
     } catch (e) {
       fallidas++;
       if (e && e.fotosFormato) fallosFormato++;
-      fotosLog('subida_fallida', 'foto ' + (i + 1) + '/' + total + ' (' + (fotosCola[i] && fotosCola[i].type) + '): ' + ((e && e.message) || e));
+      fotosLog('subida_fallida', 'foto ' + (i + 1) + '/' + total + ' (' + (cola[i] && cola[i].type) + '): ' + ((e && e.message) || e));
     }
   }
-  fotosCola = [];
-  const prev = document.getElementById('fotos-prev');
-  if (prev) prev.innerHTML = '';
+  const quedan = fotosCola.length;
+  if (!quedan) {
+    const prev = document.getElementById('fotos-prev');
+    if (prev) prev.innerHTML = '';
+  }
   if (btn) btn.disabled = false;
   fotosSubiendo = false;
   if (fallidas === 0) {
@@ -200,6 +238,8 @@ async function fotosSubir() {
     fotosEstado(subidas + (subidas === 1 ? ' subida · ' : ' subidas · ') + fallidas + (fallidas === 1 ? ' fallida.' : ' fallidas.') + ' Inténtalo de nuevo con las que falten.', 'err');
   }
   fotosCargar();
+  // Lo que se acumuló mientras subíamos sale ahora, en otra ronda.
+  if (quedan) fotosSubir();
 }
 
 async function fotosCargar() {

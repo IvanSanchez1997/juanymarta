@@ -133,6 +133,15 @@ body {
   font-size: 11px; letter-spacing: 3px;
   text-transform: uppercase; color: var(--text);
 }
+/* Texto auxiliar bajo cada opción: deja claro que la foto de la
+   cámara se sube sola y que las de la galería no. Sin esto el
+   invitado no sabe si tiene que pulsar el botón después. */
+.fotos-pick-sub {
+  font-size: 10px; font-weight: 300;
+  letter-spacing: 0.3px; text-transform: none;
+  color: var(--text-light); opacity: 0.9;
+  margin-top: -3px;
+}
 .fotos-btn { margin-top: 14px; }
 .fotos-estado {
   min-height: 20px; margin-top: 12px;
@@ -270,15 +279,17 @@ body {
     <label class="fotos-pick" for="fotos-input-cam">
       <span class="fotos-pick-ico">📸</span>
       <span class="fotos-pick-txt">Hacer foto</span>
+      <span class="fotos-pick-sub">se sube sola</span>
     </label>
     <label class="fotos-pick" for="fotos-input">
       <span class="fotos-pick-ico">🖼️</span>
       <span class="fotos-pick-txt">Galería</span>
+      <span class="fotos-pick-sub">elige varias</span>
     </label>
   </div>
-  <input type="file" id="fotos-input-cam" accept="image/*" capture="environment" onchange="fotosElegir(this.files)">
+  <input type="file" id="fotos-input-cam" accept="image/*" capture="environment" onchange="fotosElegir(this.files, true)">
   <input type="file" id="fotos-input" accept="image/*" multiple onchange="fotosElegir(this.files)">
-  <button class="btn-enviar fotos-btn" id="fotos-btn" onclick="fotosSubir()">✦ Subir fotos ✦</button>
+  <button class="btn-enviar fotos-btn" id="fotos-btn" onclick="fotosSubir()">✦ Subir las elegidas ✦</button>
   <div class="fotos-estado" id="fotos-estado" aria-live="polite"></div>
   <div class="fotos-prev" id="fotos-prev"></div>
 </div>
