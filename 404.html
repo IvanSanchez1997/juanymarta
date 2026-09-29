@@ -3,33 +3,117 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=390, initial-scale=1.0">
-<title>Juan & Marta · 11 Octubre 2026</title>
+<meta name="robots" content="noindex">
+<title>Juan &amp; Marta · 11 Octubre 2026</title>
 <!--
   Página de error de GitHub Pages.
 
-  Existe por un motivo concreto: /galeria se sirve como
-  /galeria/ y GitHubPages redirige /galeria -> /galeria/ con un 301.
-  Esa redirección NO la sigue un <meta refresh>, así que sin este
-  fichero el enlace "Ver galería completa" se vería en un 404 real.
+  Antes esto mandaba a la galería CUALQUIER ruta que no existiera,
+  con un <meta refresh> que no podía condicionar. El problema es que
+  quien se equivocaba al teclear una dirección aparecía de golpe
+  viendo las fotos de la boda, sin entender qué había pasado.
 
-  El refresh solo actúa si la URL es /galeria o /galeria/ (a secas,
-  o con un subcamino que no exista). Con cualquier otro nombre
-  devuelve un 404 de verdad, que es lo que debe pasar.
+  Ahora el salto a la galería solo se hace si la ruta que falló era
+  de /galeria, que es el único sitio donde tiene sentido: si alguien
+  tiene un enlace viejo a /galeria/fotos, le lleva allí en vez de
+  dejarlo en un error. Cualquier otra ruta se queda aquí, con el
+  aviso y el botón de volver.
+
+  El script hace falta porque el salto tiene que depender de la URL,
+  cosa que un <meta refresh> estático no puede hacer.
+
+  Esta página se sirve en cualquier nivel de ruta, así que no puede
+  usar rutas relativas ni archivos de js/ o css/: todo va absoluto.
 -->
-<meta http-equiv="refresh" content="0; url=/galeria/">
-<link rel="canonical" href="https://juanymarta.com/galeria/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=Great+Vibes&family=Cinzel:wght@300;400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
+:root {
+  --gold: #c9a155;
+  --gold-light: #e8d5a0;
+  --cream: #fefcf8;
+  --text: #5a4535;
+  --text-light: #8a7060;
+}
+* { box-sizing: border-box; }
 html { background: #ddd5cc; }
 body {
   width: 390px; margin: 0 auto; min-height: 100vh;
-  background: #fefcf8; color: #5a4535;
-  font-family: Georgia, serif;
+  background: var(--cream); color: var(--text);
+  font-family: 'Jost', sans-serif; font-weight: 300;
+  box-shadow: 0 0 80px rgba(0,0,0,0.25);
   display: flex; align-items: center; justify-content: center;
-  text-align: center; padding: 30px;
+  text-align: center; padding: 34px 30px;
+  -webkit-font-smoothing: antialiased;
+}
+.pag { width: 100%; }
+.nombres {
+  font-family: 'Great Vibes', cursive;
+  font-size: 42px; line-height: 1.1; margin: 0;
+}
+/* Divisor como el del resto de la web, con la estrella en medio. */
+.divisor {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; margin: 18px auto 22px; max-width: 190px;
+}
+.divisor i {
+  flex: 1; height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+.divisor b { color: var(--gold); font-size: 11px; font-weight: 400; }
+.titulo {
+  font-family: 'Great Vibes', cursive;
+  font-size: 40px; line-height: 1.15; margin: 0;
+}
+.texto {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 19px; line-height: 1.55; color: var(--text);
+  margin: 16px 0 0;
+}
+/* Mismo aspecto que el botón de "Confirmar asistencia" del index. */
+.btn {
+  display: block; width: 100%;
+  margin-top: 30px; padding: 15px;
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+  border: none; border-radius: 8px; color: #fff;
+  font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 5px;
+  text-decoration: none; cursor: pointer; transition: opacity 0.3s;
+}
+.btn:hover { opacity: 0.85; }
+.pie {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 15px; color: var(--text-light);
+  margin: 22px 0 0;
 }
 </style>
 </head>
 <body>
-<p>Te llevamos a la galer&iacute;a&hellip;</p>
+  <main class="pag">
+    <p class="nombres">Juan &amp; Marta</p>
+    <div class="divisor"><i></i><b>&#10022;</b><i></i></div>
+    <h1 class="titulo" id="titulo">Esta p&aacute;gina<br>no existe</h1>
+    <p class="texto" id="texto">Puede que el enlace est&eacute; mal escrito o que la p&aacute;gina haya cambiado.</p>
+    <a class="btn" id="btn" href="/">Volver a la boda</a>
+    <p class="pie">11 Octubre 2026</p>
+  </main>
+<script>
+  /* Solo las rutas de /galeria se redirigen a la galería, porque
+     es el único sitio donde el rescate tiene sentido. El resto se
+     queda en la página de error. Se usa replace() y no un enlace
+     normal para que el botón "atrás" del móvil no devuelva al 404
+     otra vez. */
+  (function () {
+    var p = location.pathname;
+    var esGaleria = p === '/galeria' || p === '/galeria/' || p.indexOf('/galeria/') === 0;
+    if (!esGaleria) return;
+    document.getElementById('titulo').innerHTML = 'Te llevamos a<br>la galer&iacute;a';
+    document.getElementById('texto').textContent = 'Un momento…';
+    var b = document.getElementById('btn');
+    b.href = '/galeria/';
+    b.textContent = 'Ir a la galería';
+    setTimeout(function () { location.replace('/galeria/'); }, 700);
+  })();
+</script>
 </body>
 </html>
