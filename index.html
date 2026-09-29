@@ -1123,6 +1123,150 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
   from { opacity: 0; transform: translateY(26px); }
   to   { opacity: 1; transform: none; }
 }
+
+/* ═══════════════════════════════════════════
+   GALERÍA DE FOTOS DE INVITADOS
+
+   Reutiliza los tokens de :root y las
+   tipografías del sitio. Los IDs #fotos-* son
+   contrato con js/fotos.js — no renombrarlos.
+   ═══════════════════════════════════════════ */
+
+/* El botón de enviar se deshabilita durante la subida */
+.btn-enviar:disabled {
+  opacity: 0.5; cursor: default; transform: none;
+}
+
+.fotos-up {
+  width: 100%;
+  margin: 22px auto 0;
+  padding: 26px 22px;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(8px);
+  border: 1.5px dashed rgba(201,161,85,0.45);
+  border-radius: 12px;
+  text-align: center;
+}
+/* Regla que no se debe romper: sin esto se ve
+   el botón nativo "Seleccionar archivo" */
+.fotos-up input[type="file"] { display: none; }
+.fotos-picks {
+  display: flex; justify-content: center;
+  gap: 10px;
+}
+.fotos-pick {
+  display: inline-flex; flex-direction: column; align-items: center;
+  gap: 6px;
+  flex: 1; max-width: 130px;
+  padding: 14px 10px;
+  border: 1.5px solid rgba(201,161,85,0.3);
+  border-radius: 10px;
+  background: rgba(254,252,248,0.8);
+  cursor: pointer;
+  transition: border-color 0.3s, background 0.3s;
+  user-select: none;
+}
+.fotos-pick:hover { border-color: var(--gold); background: #fff; }
+.fotos-pick-ico { font-size: 24px; }
+.fotos-pick-txt {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--text);
+}
+.fotos-btn { margin-top: 14px; }
+.fotos-estado {
+  min-height: 20px; margin-top: 12px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 15px; line-height: 1.5;
+  color: var(--text-light);
+}
+.fotos-estado.fotos-ok { color: var(--gold); }
+.fotos-estado.fotos-err { color: #c06a55; }
+.fotos-prev {
+  display: flex; gap: 8px;
+  overflow-x: auto;
+  margin-top: 12px; padding-bottom: 4px;
+}
+.fotos-prev:empty { display: none; }
+.fotos-prev img {
+  flex: 0 0 auto;
+  width: 54px; height: 54px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(201,161,85,0.35);
+}
+.fotos-gal-wrap { width: 100%; margin-top: 28px; text-align: center; }
+.fotos-gal-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 14px;
+}
+.fotos-gal {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.fotos-item {
+  padding: 0;
+  border: 1px solid rgba(201,161,85,0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--gold-pale);
+  cursor: pointer;
+  aspect-ratio: 1;
+  animation: fadeUp 0.45s cubic-bezier(0.16,1,0.3,1) both;
+}
+.fotos-item img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform 0.3s;
+}
+.fotos-item:hover img { transform: scale(1.05); }
+.fotos-vacio {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 16px;
+  color: var(--text-light); opacity: 0.7;
+  padding: 6px 0 2px;
+}
+
+/* Lightbox (position:fixed → funciona aunque el bloque esté
+   con overflow:hidden, siempre que ningún ancestro tenga
+   transform/filter/backdrop-filter) */
+.fotos-lb {
+  position: fixed; inset: 0;
+  z-index: 999;
+  display: none;
+  align-items: center; justify-content: center;
+  background: rgba(40,32,24,0.94);
+}
+.fotos-lb.abierta { display: flex; }
+.fotos-lb img {
+  max-width: 88vw; max-height: 80vh;
+  border-radius: 6px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+.fotos-lb-close {
+  position: absolute; top: 14px; right: 16px;
+  background: none; border: none;
+  color: var(--gold-light);
+  font-size: 26px; line-height: 1;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.fotos-lb-nav {
+  position: absolute; top: 50%;
+  transform: translateY(-50%);
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(201,161,85,0.15);
+  border: 1px solid rgba(201,161,85,0.4);
+  color: var(--gold-light);
+  font-size: 22px; line-height: 1;
+  cursor: pointer;
+}
+.fotos-lb-prev { left: 10px; }
+.fotos-lb-next { right: 10px; }
 </style>
 </head>
 <body>
@@ -1819,7 +1963,45 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
   <div class="sep"><div class="l"></div><span class="ico">✦</span><div class="r"></div></div>
 
   <!-- ══════════════════════════════
-       BLOQUE 10 — Regalo / IBAN
+       BLOQUE 10 — Vuestras fotos (galería de invitados)
+  ══════════════════════════════ -->
+  <div class="story-block">
+    <div class="fx-zoom fx-d1 sb-pre">Vuestras fotos</div>
+    <div class="fx-zoom fx-d2 sb-title">Vuestros momentos</div>
+    <div class="divider-gold fx-zoom fx-d3" style="margin:14px auto;"></div>
+    <div class="fx-zoom fx-d4 sb-body" style="margin:0 auto;">¿Tienes fotos del día? Súbelas aquí y las veremos todos juntos.</div>
+
+    <!-- SUBIDA -->
+    <div class="fotos-up">
+      <div class="fotos-picks">
+        <label class="fotos-pick" for="fotos-input-cam">
+          <span class="fotos-pick-ico">📸</span>
+          <span class="fotos-pick-txt">Hacer foto</span>
+        </label>
+        <label class="fotos-pick" for="fotos-input">
+          <span class="fotos-pick-ico">🖼️</span>
+          <span class="fotos-pick-txt">Galería</span>
+        </label>
+      </div>
+      <input type="file" id="fotos-input-cam" accept="image/*" capture="environment" onchange="fotosElegir(this.files)">
+      <input type="file" id="fotos-input" accept="image/*" multiple onchange="fotosElegir(this.files)">
+      <button class="btn-enviar fotos-btn" id="fotos-btn" onclick="fotosSubir()">✦ Subir fotos ✦</button>
+      <div class="fotos-estado" id="fotos-estado" aria-live="polite"></div>
+      <div class="fotos-prev" id="fotos-prev"></div>
+    </div>
+
+    <!-- GALERÍA -->
+    <div class="fotos-gal-wrap">
+      <div class="fotos-gal-title">La galería</div>
+      <div class="fotos-gal" id="fotos-gal"></div>
+      <div class="fotos-vacio" id="fotos-vacio">Aún no hay fotos por aquí. ¡Sube la tuya y empieza la colección! ✨</div>
+    </div>
+  </div>
+
+  <div class="sep"><div class="l"></div><span class="ico">✦</span><div class="r"></div></div>
+
+  <!-- ══════════════════════════════
+       BLOQUE 11 — Regalo / IBAN
   ══════════════════════════════ -->
   <div class="story-block">
     <div class="wc-blob" style="transition-delay:0.25s">
@@ -1887,11 +2069,29 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
   </footer>
 
 </div><!-- /contenido -->
-<!--  ══════════════════════════════════
+
+<!-- ══════════════════════════════
+     LIGHTBOX DE LA GALERÍA
+     Fuera de #contenido a propósito: dentro de un
+     .story-block, la regla `position:relative; z-index:1`
+     pisaría el position:fixed y el overlay no taparía.
+     Y el div debe existir ANTES de js/fotos.js, que
+     lo lee en tiempo de parseo.
+══════════════════════════════════════ -->
+<div class="fotos-lb" id="fotos-lb" onclick="fotosLbCerrar()">
+  <button class="fotos-lb-nav fotos-lb-prev" type="button" onclick="event.stopPropagation();fotosLbMover(-1)" aria-label="Foto anterior">‹</button>
+  <img id="fotos-lb-img" alt="Foto de la boda">
+  <button class="fotos-lb-nav fotos-lb-next" type="button" onclick="event.stopPropagation();fotosLbMover(1)" aria-label="Foto siguiente">›</button>
+  <button class="fotos-lb-close" type="button" onclick="event.stopPropagation();fotosLbCerrar()" aria-label="Cerrar">✕</button>
+</div>
+
+<!-- ══════════════════════════════════
    ANALITICAS
 ══════════════════════════════════  -->
 <script data-goatcounter="https://ivan236.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
+
+<script src="js/fotos.js"></script>
 		
 <script>
 /* ══════════════════════════════════
