@@ -387,6 +387,14 @@ function fotosAjustarTira() {
   if (btn) btn.classList.toggle('on', fotosItems.length >= FOTOS_TIRA_MIN);
 }
 
+/* El visor abre una entrada propia en el historial del navegador.
+   Sin esto, el gesto de "atrás" del móvil no tenía nada que
+   consumir y se llevaba al invitado FUERA de la web de un salto,
+   sin llegar siquiera a cerrar el visor: el zoom no había formado
+   parte de la navegación. Con la entrada, el gesto lo cierra y la
+   web se queda exactamente donde estaba. */
+let fotosLbHist = false;
+
 function fotosLbAbrir(i) {
   if (!fotosItems.length) return;
   fotosIdx = i;
@@ -395,6 +403,16 @@ function fotosLbAbrir(i) {
   if (!lb || !img) return;
   img.src = fotosItems[i].full;
   lb.classList.add('abierta');
+  // Solo la apertura crea entrada. Si no, pasar de foto a foto con
+  // los flechitos o deslizando añadiría una entrada por cada foto y
+  // el "atrás" daría pasos de una en una, que es peor.
+  if (!fotosLbHist) {
+    fotosLbHist = true;
+    // Se pasa location.href para que la barra de direcciones no
+    // cambie: el invitado no ve nada, solo nota que "atrás" cierra
+    // el visor en vez de echarlo de la web.
+    history.pushState({ fotosLb: true }, '', location.href);
+  }
 }
 
 function fotosLbMover(d) {
@@ -405,7 +423,26 @@ function fotosLbMover(d) {
 function fotosLbCerrar() {
   const lb = document.getElementById('fotos-lb');
   if (lb) lb.classList.remove('abierta');
+  if (fotosLbHist) {
+    // El flag se baja ANTES de history.back(), porque esa llamada
+    // dispara popstate y el listener de abajo no debe volver a
+    // cerrar. Con el flag ya en false, se limita a no hacer nada.
+    fotosLbHist = false;
+    history.back();
+  }
 }
+
+/* El gesto de "atrás" del móvil. El navegador ya está retrocediendo
+   hacia la entrada anterior, así que aquí NO se llama a history.back
+   (sería navegar dos veces): solo se cierra el visor. Si el flag
+   está en false es que la entrada ya se consumió cerrando con la X,
+   y entonces no hay nada que hacer. */
+window.addEventListener('popstate', () => {
+  if (!fotosLbHist) return;
+  fotosLbHist = false;
+  const lb = document.getElementById('fotos-lb');
+  if (lb) lb.classList.remove('abierta');
+});
 
 document.addEventListener('keydown', e => {
   const lb = document.getElementById('fotos-lb');
