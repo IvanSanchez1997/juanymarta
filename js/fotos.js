@@ -22,11 +22,12 @@ const FOTOS_REINTENTOS = 3;
    hace más de 30 fotos sin pulsar el botón. */
 const FOTOS_COLA_MAX = 30;
 
-/* En el index las fotos van en una tira horizontal, así que solo
-   se ven unas 3. A partir de este número tiene sentido ofrecer el
-   botón de "ver galería completa" (página /galeria, donde sí van
-   todas en vertical). */
-const FOTOS_TIRA_MAX = 6;
+/* En el index las fotos van en una tira horizontal, así que solo se
+   ven unas 3. El botón de "ver galería completa" (página /galeria,
+   donde sí van todas en vertical) aparece en cuanto hay al menos
+   una foto, no a partir de un mínimo: hasta con dos fotos subidas
+   tiene sentido poder verlas grandes. */
+const FOTOS_TIRA_MIN = 1;
 
 let fotosCola = [];
 let fotosSubiendo = false;
@@ -35,6 +36,10 @@ let fotosSubiendo = false;
    se puede seguir haciendo fotos. No se guarda en ningún sitio: al
    recargar la página el flujo vuelve a empezar abierto. */
 let fotosSoloCamara = false;
+/* Texto que tenía la opción de galería antes de bloquearla, para
+   poder devolverlo tal cual al desbloquear en vez de reescribirlo
+   aquí y que se quede viejo si algún día cambia la redacción. */
+let fotosSubGalTexto = null;
 let fotosItems = [];
 let fotosIdx = 0;
 let fotosLogEnviados = 0;
@@ -82,9 +87,33 @@ function fotosBloquearGaleria() {
     lab.setAttribute('aria-disabled', 'true');
   }
   const sub = document.getElementById('fotos-sub-gal');
-  if (sub) sub.textContent = 'solo cámara';
+  if (sub) {
+    if (fotosSubGalTexto === null) fotosSubGalTexto = sub.textContent;
+    sub.textContent = 'solo cámara';
+  }
   const inp = document.getElementById('fotos-input');
   if (inp) inp.disabled = true;
+}
+
+/* Contrario de lo anterior: al terminar de subir las fotos de la
+   cámara, la galería vuelve a estar disponible. El caso real es que
+   el invitado lleva un rato haciendo fotos, las sube, y luego
+   quiere añadir otras que ya tenía en el móvil y no ha subido. Si
+   la galería se quedara bloqueada para siempre no podría, y perder
+   fotos ajenas al navegador por un candado que ya no hace falta es
+   la peor forma de perderlas. */
+function fotosDesbloquearGaleria() {
+  if (!fotosSoloCamara) return;
+  fotosSoloCamara = false;
+  const lab = document.getElementById('fotos-pick-gal');
+  if (lab) {
+    lab.classList.remove('bloqueada');
+    lab.removeAttribute('aria-disabled');
+  }
+  const sub = document.getElementById('fotos-sub-gal');
+  if (sub && fotosSubGalTexto !== null) sub.textContent = fotosSubGalTexto;
+  const inp = document.getElementById('fotos-input');
+  if (inp) inp.disabled = false;
 }
 
 /* auto: true cuando la foto viene de la cámara (el input que lleva
@@ -269,6 +298,12 @@ async function fotosSubir() {
   } else {
     fotosEstado(subidas + (subidas === 1 ? ' subida · ' : ' subidas · ') + fallidas + (fallidas === 1 ? ' fallida.' : ' fallidas.') + ' Inténtalo de nuevo con las que falten.', 'err');
   }
+  /* La cámara deja de retener al invitado solo cuando la tanda se ha
+     subido ENTERA y no queda nada pendiente. Si falló alguna se
+     mantiene el bloqueo, porque todavía tiene fotos sueltas y lo
+     natural es seguir haciéndolas con la cámara, que es lo que
+     estaba usando. */
+  if (fallidas === 0 && subidas > 0 && quedan === 0) fotosDesbloquearGaleria();
   fotosCargar();
   // Lo que se acumuló mientras subíamos sale ahora, en otra ronda.
   if (quedan) fotosSubir();
@@ -349,7 +384,7 @@ function fotosAjustarTira() {
   const gal = document.getElementById('fotos-gal');
   if (!btn && !hint) return;
   if (hint) hint.classList.toggle('on', !!gal && gal.scrollWidth > gal.clientWidth + 4);
-  if (btn) btn.classList.toggle('on', fotosItems.length > FOTOS_TIRA_MAX);
+  if (btn) btn.classList.toggle('on', fotosItems.length >= FOTOS_TIRA_MIN);
 }
 
 function fotosLbAbrir(i) {
