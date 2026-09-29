@@ -1173,14 +1173,29 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
   font-size: 11px; letter-spacing: 3px;
   text-transform: uppercase; color: var(--text);
 }
-/* Texto auxiliar bajo cada opción: deja claro que la foto de la
-   cámara se sube sola y que las de la galería no. Sin esto el
-   invitado no sabe si tiene que pulsar el botón después. */
+/* Texto auxiliar bajo cada opción: deja claro que la cámara y la
+   galería se portan igual (preparan fotos y hay que pulsar el
+   botón) y que en la galería se pueden elegir varias de golpe. */
 .fotos-pick-sub {
   font-size: 10px; font-weight: 300;
   letter-spacing: 0.3px; text-transform: none;
   color: var(--text-light); opacity: 0.9;
   margin-top: -3px;
+}
+/* En cuanto se hace la primera foto con la cámara, la galería se
+   deshabilita: el flujo se queda en cámara. pointer-events:none
+   hace que el toque no abra el selector de ficheros, y opacity lo
+   deja claro sin parecer un fallo de la página. */
+.fotos-pick.bloqueada {
+  opacity: 0.35;
+  pointer-events: none;
+  cursor: default;
+  border-color: rgba(201,161,85,0.15);
+  background: rgba(254,252,248,0.5);
+}
+.fotos-pick.bloqueada:hover {
+  border-color: rgba(201,161,85,0.15);
+  background: rgba(254,252,248,0.5);
 }
 .fotos-btn { margin-top: 14px; }
 .fotos-estado {
@@ -2047,12 +2062,12 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
         <label class="fotos-pick" for="fotos-input-cam">
           <span class="fotos-pick-ico">📸</span>
           <span class="fotos-pick-txt">Hacer foto</span>
-          <span class="fotos-pick-sub">se sube sola</span>
+          <span class="fotos-pick-sub">tantas como quieras</span>
         </label>
-        <label class="fotos-pick" for="fotos-input">
+        <label class="fotos-pick" id="fotos-pick-gal" for="fotos-input">
           <span class="fotos-pick-ico">🖼️</span>
           <span class="fotos-pick-txt">Galería</span>
-          <span class="fotos-pick-sub">elige varias</span>
+          <span class="fotos-pick-sub" id="fotos-sub-gal">elige varias</span>
         </label>
       </div>
       <input type="file" id="fotos-input-cam" accept="image/*" capture="environment" onchange="fotosElegir(this.files, true)">

@@ -16,9 +16,10 @@ const FOTOS_PUBLIC_BASE = 'https://fotos-jm.binvita.es/';
 const FOTOS_MAX = 12;
 const FOTOS_REINTENTOS = 3;
 
-/* Tope de fotos acumuladas en la cola cuando el invitado va
-   haciendo fotos seguidas. Es un guard contra un bucle absurdo,
-   no un límite real: en una boda se ficam bastante menos. */
+/* Tope de fotos acumuladas esperando a que el invitado pulse
+   "Subir fotos". Con la cámara se puede hacer una detrás de otra,
+   así que este guard es más real que antes: solo salta si alguien
+   hace más de 30 fotos sin pulsar el botón. */
 const FOTOS_COLA_MAX = 30;
 
 /* En el index las fotos van en una tira horizontal, así que solo
@@ -29,6 +30,11 @@ const FOTOS_TIRA_MAX = 6;
 
 let fotosCola = [];
 let fotosSubiendo = false;
+/* Se pone a true en cuanto el invitado hace la primera foto con la
+   cámara. A partir de ahí la opción de galería se deshabilita y solo
+   se puede seguir haciendo fotos. No se guarda en ningún sitio: al
+   recargar la página el flujo vuelve a empezar abierto. */
+let fotosSoloCamara = false;
 let fotosItems = [];
 let fotosIdx = 0;
 let fotosLogEnviados = 0;
@@ -63,12 +69,31 @@ function fotosEsperar(ms) {
   return new Promise(res => setTimeout(res, ms));
 }
 
+/* Al hacer la primera foto con la cámara, la opción de galería
+   queda bloqueada para el resto de la sesión: si has empezado
+   con la cámara, sigues con la cámara. Un doble bloqueo por si
+   acaso: el CSS pone pointer-events:none en la etiqueta y aquí
+   además se desactiva el input y se ignoran los ficheros. */
+function fotosBloquearGaleria() {
+  fotosSoloCamara = true;
+  const lab = document.getElementById('fotos-pick-gal');
+  if (lab) {
+    lab.classList.add('bloqueada');
+    lab.setAttribute('aria-disabled', 'true');
+  }
+  const sub = document.getElementById('fotos-sub-gal');
+  if (sub) sub.textContent = 'solo cámara';
+  const inp = document.getElementById('fotos-input');
+  if (inp) inp.disabled = true;
+}
+
 /* auto: true cuando la foto viene de la cámara (el input que lleva
-   capture="environment"). En ese caso se sube sola, sin pasar por
-   el botón. Las elegidas en la galería del móvil siguen
-   necesitando el botón, porque ahí lo normal es elegir varias
-   junta y conviene verlas antes de mandarlas. */
+   capture="environment"). La foto NO se sube sola: se queda en la
+   cola, preparada, y el invitado sigue haciendo más hasta que
+   pulsa "Subir fotos". Elegir en la galería del móvil mantiene el
+   flujo de siempre: varias de golpe, revisión y botón. */
 function fotosElegir(files, auto) {
+  if (!auto && fotosSoloCamara) return;
   const sel = Array.from(files || []).filter(f => f.type && f.type.indexOf('image/') === 0);
   ['fotos-input', 'fotos-input-cam'].forEach(id => {
     const el = document.getElementById(id);
@@ -78,30 +103,37 @@ function fotosElegir(files, auto) {
     fotosEstado('Solo se aceptan imágenes.', 'err');
     return;
   }
+  if (auto) fotosBloquearGaleria();
   const nuevas = sel.slice(0, FOTOS_MAX);
-  if (fotosSubiendo) {
-    // Hay una tanda en marcha: se añaden al final, no se sustituyen.
-    // Si se sustituyeran, las fotos intermedias de una ráfaga se
-    // perderían (quien hace tres seguidas solo conservaría la
-    // primera y la última).
+  /* ¿Se añaden al final o sustituyen a lo que había?
+     La cámara ACUMULA siempre que ya haya fotos preparadas: es lo
+     que se ha pedido, hacer varias fotos seguidas y subirlas juntas.
+     Antes esto solo se acumulaba si había una subida en marcha, y
+     al dejar de subida automática el hueco dejó de existir: hacer
+     dos fotos seguidas dejaba solo la segunda. La galería sí
+     sustituye, porque es un "elige tu tanda" de una vez: si te
+     arrepientes y vuelves a elegir, quieres que gane la nueva. */
+  const acumular = fotosSubiendo || (auto && fotosCola.length > 0);
+  let topado = false;
+  if (acumular) {
     fotosCola = fotosCola.concat(nuevas);
     if (fotosCola.length > FOTOS_COLA_MAX) {
       fotosCola = fotosCola.slice(0, FOTOS_COLA_MAX);
-      fotosEstado('Solo se guardan las ' + FOTOS_COLA_MAX + ' primeras de una ráfaga. Repite las que falten.', 'ok');
+      topado = true;
     }
   } else {
     fotosCola = nuevas;
   }
-  if (auto) {
-    // No se avisa de "X fotos listas para subir": se sube ya. El
-    // mensaje de progreso lo pone fotosSubir() a continuación.
-    fotosSubir();
-    return;
-  }
-  if (sel.length > FOTOS_MAX) {
+  const n = fotosCola.length;
+  if (topado) {
+    fotosEstado('Solo caben ' + FOTOS_COLA_MAX + ' sin subir. Pulsa Subir fotos y añade el resto después.', 'ok');
+  } else if (auto) {
+    fotosEstado(n + (n === 1 ? ' foto preparada' : ' fotos preparadas') +
+      '. Puedes hacer más y luego pulsa Subir fotos.', 'ok');
+  } else if (sel.length > FOTOS_MAX) {
     fotosEstado('Máximo ' + FOTOS_MAX + ' fotos por vez: subiremos las ' + FOTOS_MAX + ' primeras.', 'ok');
   } else {
-    fotosEstado(fotosCola.length + (fotosCola.length === 1 ? ' foto lista para subir.' : ' fotos listas para subir.'), 'ok');
+    fotosEstado(n + (n === 1 ? ' foto lista para subir.' : ' fotos listas para subir.'), 'ok');
   }
   const prev = document.getElementById('fotos-prev');
   if (!prev) return;
