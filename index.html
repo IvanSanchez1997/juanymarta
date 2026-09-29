@@ -2022,8 +2022,11 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
 
   <!-- ══════════════════════════════
        BLOQUE 10 — Vuestras fotos (galería de invitados)
+       El id="fotos" es el ancla a la que vuelve /galeria
+       (href="../#fotos"), para no dejar al invitado en la
+       portada ni en el hero.
   ══════════════════════════════ -->
-  <div class="story-block">
+  <div class="story-block" id="fotos">
     <div class="fx-zoom fx-d1 sb-pre">Vuestras fotos</div>
     <div class="fx-zoom fx-d2 sb-title">Vuestros momentos</div>
     <div class="divider-gold fx-zoom fx-d3" style="margin:14px auto;"></div>
@@ -2161,7 +2164,10 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
 ══════════════════════════════════ */
 let playing = false;
 
-function abrirInvitacion() {
+/* destino: id de un bloque al que baja en vez de ir al hero.
+   Lo usa ../#fotos al volver de /galeria. Sin argumento,
+   comportamiento de siempre: arriba del todo. */
+function abrirInvitacion(destino) {
   const audio = document.getElementById('wedding-audio');
   audio.play().then(() => {
     playing = true;
@@ -2172,7 +2178,12 @@ function abrirInvitacion() {
   const cont = document.getElementById('contenido');
   cont.style.pointerEvents = 'all';
   setTimeout(() => {
-    window.scrollTo(0, 0);
+    if (destino) {
+      const bloque = document.getElementById(destino);
+      if (bloque) bloque.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.scrollTo(0, 0);
+    }
     cont.classList.add('visible');
     document.getElementById('portada').style.display = 'none';
     document.getElementById('music-btn').classList.add('show');
@@ -2185,6 +2196,17 @@ function abrirInvitacion() {
     // Inicia parallax
     requestAnimationFrame(photoParallax);
   }, 950);
+}
+
+// Al volver de /galeria el enlace es "../#fotos": la portada se
+// salta y se baja directo al bloque de fotos. El scroll nativo del
+// navegador no serviría aquí, porque lo hace ANTES de que
+// abrirInvitacion() saque #contenido de opacity:0, y luego
+// window.scrollTo(0,0) lo dejaría en el hero.
+// Solo afecta a quien llega con ese ancla; el primer visitante
+// sigue viendo la portada y pulsando el botón como siempre.
+if (location.hash === '#fotos') {
+  abrirInvitacion('fotos');
 }
 
 /* ══════════════════════════════════

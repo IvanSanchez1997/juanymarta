@@ -81,6 +81,82 @@ body {
 }
 
 /* ═══════════════════════════════════════════
+   SUBIDA DE FOTOS
+   Reglas copiadas de index.html a propósito, para
+   que el botón se vea igual en las dos páginas.
+   Si algún día se toca el estilo, hay que
+   tocarlo también allí.
+   ═══════════════════════════════════════════ */
+.btn-enviar {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+  border: none; border-radius: 8px; color: white;
+  font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 5px;
+  cursor: pointer; transition: all 0.3s; margin-top: 4px;
+}
+.btn-enviar:hover { opacity: 0.85; transform: translateY(-1px); }
+.btn-enviar:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+/* width:auto + margenes laterales en vez de width:100%, porque
+   aquí el bloque es hijo directo de body (390px) y no va dentro
+   de un .story-block con padding como en index.html. Los 20px
+   son los mismos que usan .gal-head y la rejilla. */
+.fotos-up {
+  margin: 0 20px 28px;
+  padding: 26px 22px;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(8px);
+  border: 1.5px dashed rgba(201,161,85,0.45);
+  border-radius: 12px;
+  text-align: center;
+}
+/* Regla que no se debe romper: sin esto se ve
+   el botón nativo "Seleccionar archivo" */
+.fotos-up input[type="file"] { display: none; }
+.fotos-picks { display: flex; justify-content: center; gap: 10px; }
+.fotos-pick {
+  display: inline-flex; flex-direction: column; align-items: center;
+  gap: 6px;
+  flex: 1; max-width: 130px;
+  padding: 14px 10px;
+  border: 1.5px solid rgba(201,161,85,0.3);
+  border-radius: 10px;
+  background: rgba(254,252,248,0.8);
+  cursor: pointer;
+  transition: border-color 0.3s, background 0.3s;
+  user-select: none;
+}
+.fotos-pick:hover { border-color: var(--gold); background: #fff; }
+.fotos-pick-ico { font-size: 24px; }
+.fotos-pick-txt {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--text);
+}
+.fotos-btn { margin-top: 14px; }
+.fotos-estado {
+  min-height: 20px; margin-top: 12px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 15px; line-height: 1.5;
+  color: var(--text-light);
+}
+.fotos-estado.fotos-ok { color: var(--gold); }
+.fotos-estado.fotos-err { color: #c06a55; }
+.fotos-prev {
+  display: flex; gap: 8px;
+  overflow-x: auto;
+  margin-top: 12px; padding-bottom: 4px;
+}
+.fotos-prev:empty { display: none; }
+.fotos-prev img {
+  flex: 0 0 auto;
+  width: 54px; height: 54px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(201,161,85,0.35);
+}
+
+/* ═══════════════════════════════════════════
    REJILLA
    Aquí sí van todas, en vertical y a dos
    columnas: es la versión "completa" que el
@@ -173,7 +249,7 @@ body {
      CABECERA
 ═══════════════════════════════════════════ -->
 <div class="gal-top">
-  <a class="gal-volver" href="../">&larr; Volver</a>
+  <a class="gal-volver" href="../#fotos">&larr; Volver</a>
   <span class="gal-count" id="fotos-count"></span>
 </div>
 
@@ -181,6 +257,30 @@ body {
   <div class="gal-pre">Vuestras fotos</div>
   <div class="gal-title">Nuestra colecci&oacute;n</div>
   <div class="gal-sub">Todas las instantáneas que los invitados han ido dejando a lo largo del d&iacute;a. Gracias por compartirlas con nosotros.</div>
+</div>
+
+<!-- ═══ SUBIDA ═══
+     Mismos IDs que en index.html: son el contrato con
+     js/fotos.js, que ya es null-safe y no necesita
+     cambios para que la subida funcione aquí. Al
+     terminar, fotosSubir() llama a fotosCargar() y la
+     rejilla de abajo se repinta con la foto nueva. -->
+<div class="fotos-up">
+  <div class="fotos-picks">
+    <label class="fotos-pick" for="fotos-input-cam">
+      <span class="fotos-pick-ico">📸</span>
+      <span class="fotos-pick-txt">Hacer foto</span>
+    </label>
+    <label class="fotos-pick" for="fotos-input">
+      <span class="fotos-pick-ico">🖼️</span>
+      <span class="fotos-pick-txt">Galería</span>
+    </label>
+  </div>
+  <input type="file" id="fotos-input-cam" accept="image/*" capture="environment" onchange="fotosElegir(this.files)">
+  <input type="file" id="fotos-input" accept="image/*" multiple onchange="fotosElegir(this.files)">
+  <button class="btn-enviar fotos-btn" id="fotos-btn" onclick="fotosSubir()">✦ Subir fotos ✦</button>
+  <div class="fotos-estado" id="fotos-estado" aria-live="polite"></div>
+  <div class="fotos-prev" id="fotos-prev"></div>
 </div>
 
 <!--
