@@ -1223,6 +1223,23 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
   border-radius: 6px;
   border: 1px solid rgba(201,161,85,0.35);
 }
+.fotos-prev video {
+  flex: 0 0 auto;
+  width: 54px; height: 54px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(201,161,85,0.35);
+}
+.fotos-prev-mas {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 54px; height: 54px;
+  border-radius: 6px;
+  background: rgba(201,161,85,0.12);
+  border: 1px dashed rgba(201,161,85,0.45);
+  color: var(--gold);
+  font-family: 'Cinzel', serif; font-size: 12px;
+}
 .fotos-gal-wrap { width: 100%; margin-top: 28px; text-align: center; }
 .fotos-gal-title {
   font-family: 'Cinzel', serif;
@@ -1266,6 +1283,7 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
   flex: 0 0 103px;
   width: 103px; height: 103px;
   padding: 0;
+  position: relative;
   border: 1px solid rgba(201,161,85,0.3);
   border-radius: 8px;
   overflow: hidden;
@@ -1309,6 +1327,23 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
   transition: transform 0.3s;
 }
 .fotos-item:hover img { transform: scale(1.05); }
+.fotos-item video {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+/* Los vídeos llevan un botón de play encima para que el invitado
+   sepa que la celda es un vídeo y no una foto quieta. */
+.fotos-item.es-video::after {
+  content: '▶';
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px; height: 30px; line-height: 30px;
+  border-radius: 50%;
+  background: rgba(40,32,24,0.55);
+  color: #fff; font-size: 12px; text-align: center;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
 .fotos-vacio {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic; font-size: 16px;
@@ -1330,6 +1365,12 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
 .fotos-lb img {
   max-width: 88vw; max-height: 80vh;
   border-radius: 6px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+.fotos-lb video {
+  max-width: 88vw; max-height: 80vh;
+  border-radius: 6px;
+  background: #000;
   box-shadow: 0 10px 40px rgba(0,0,0,0.5);
 }
 .fotos-lb-close {
@@ -2075,7 +2116,7 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
         </label>
       </div>
       <input type="file" id="fotos-input-cam" accept="image/*" capture="environment" onchange="fotosElegir(this.files, true)">
-      <input type="file" id="fotos-input" accept="image/*" multiple onchange="fotosElegir(this.files)">
+      <input type="file" id="fotos-input" accept="image/*,video/*" multiple onchange="fotosElegir(this.files)">
       <button class="btn-enviar fotos-btn" id="fotos-btn" onclick="fotosSubir()">✦ Subir fotos ✦</button>
       <div class="fotos-estado" id="fotos-estado" aria-live="polite"></div>
       <div class="fotos-prev" id="fotos-prev"></div>
@@ -2174,9 +2215,10 @@ input[type="radio"][name^="autobus_a"]:checked + label[data-bus] {
      lo lee en tiempo de parseo.
 ══════════════════════════════════════ -->
 <div class="fotos-lb" id="fotos-lb" onclick="fotosLbCerrar()">
-  <button class="fotos-lb-nav fotos-lb-prev" type="button" onclick="event.stopPropagation();fotosLbMover(-1)" aria-label="Foto anterior">‹</button>
-  <img id="fotos-lb-img" alt="Foto de la boda">
-  <button class="fotos-lb-nav fotos-lb-next" type="button" onclick="event.stopPropagation();fotosLbMover(1)" aria-label="Foto siguiente">›</button>
+  <button class="fotos-lb-nav fotos-lb-prev" type="button" onclick="event.stopPropagation();fotosLbMover(-1)" aria-label="Anterior">‹</button>
+  <img id="fotos-lb-img" alt="Recuerdo de la boda">
+  <video id="fotos-lb-video" controls playsinline preload="none" onclick="event.stopPropagation()" style="display:none"></video>
+  <button class="fotos-lb-nav fotos-lb-next" type="button" onclick="event.stopPropagation();fotosLbMover(1)" aria-label="Siguiente">›</button>
   <button class="fotos-lb-close" type="button" onclick="event.stopPropagation();fotosLbCerrar()" aria-label="Cerrar">✕</button>
 </div>
 

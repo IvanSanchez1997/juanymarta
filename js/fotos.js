@@ -13,14 +13,36 @@ const FOTOS_LOG_URL     = 'https://api-fotos-jm.binvita.es/log';
 const FOTOS_PUBLIC_BASE = 'https://fotos-jm.binvita.es/';
 /* ══════════════════════════════════════════════════════════════ */
 
-const FOTOS_MAX = 12;
+/* Tope de fotos por selección. Subido de 12 a 500 el día después
+   de la boda: los invitados eligen la tanda entera de golpe. El
+   límite real lo pone la subida secuencial (una a una), no el
+   navegador; 500 es holgado y no bloquea la interfaz. */
+const FOTOS_MAX = 500;
 const FOTOS_REINTENTOS = 3;
 
-/* Tope de fotos acumuladas esperando a que el invitado pulse
+/* Tope de archivos acumulados esperando a que el invitado pulse
    "Subir fotos". Con la cámara se puede hacer una detrás de otra,
    así que este guard es más real que antes: solo salta si alguien
-   hace más de 30 fotos sin pulsar el botón. */
-const FOTOS_COLA_MAX = 30;
+   acumula más de 500 sin pulsar el botón. */
+const FOTOS_COLA_MAX = 500;
+
+/* Cuántas miniaturas se pintan en la tira de previsualización.
+   Con 500 archivos, pintar 500 <img>/<video> podría tumbar el
+   móvil: la cola se sube entera, solo se recorta la vista previa. */
+const FOTOS_PREV_MAX = 30;
+
+/* Vídeos: se suben tal cual, sin reescalar (no se puede transcodificar
+   de forma fiable en el navegador). El tope por archivo es 95 MB,
+   por debajo del límite de cuerpo de petición de Cloudflare (100 MB)
+   y del tope que valida el Worker. */
+const FOTOS_VIDEO_MAX = 95 * 1024 * 1024;
+const FOTOS_VIDEO_TIPOS = {
+  'video/mp4': 'mp4',
+  'video/quicktime': 'mov',
+  'video/webm': 'webm',
+  'video/3gpp': '3gp',
+  'video/x-m4v': 'm4v'
+};
 
 /* En el index las fotos van en una tira horizontal, así que solo se
    ven unas 3. El botón de "ver galería completa" (página /galeria,
@@ -74,6 +96,10 @@ function fotosEsperar(ms) {
   return new Promise(res => setTimeout(res, ms));
 }
 
+function fotosEsVideo(file) {
+  return !!(file && file.type && file.type.indexOf('video/') === 0);
+}
+
 /* Al hacer la primera foto con la cámara, la opción de galería
    queda bloqueada para el resto de la sesión: si has empezado
    con la cámara, sigues con la cámara. Un doble bloqueo por si
@@ -123,13 +149,13 @@ function fotosDesbloquearGaleria() {
    flujo de siempre: varias de golpe, revisión y botón. */
 function fotosElegir(files, auto) {
   if (!auto && fotosSoloCamara) return;
-  const sel = Array.from(files || []).filter(f => f.type && f.type.indexOf('image/') === 0);
+  const sel = Array.from(files || []).filter(f => f.type && (f.type.indexOf('image/') === 0 || f.type.indexOf('video/') === 0));
   ['fotos-input', 'fotos-input-cam'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
   if (!sel.length) {
-    fotosEstado('Solo se aceptan imágenes.', 'err');
+    fotosEstado('Solo se aceptan fotos y vídeos.', 'err');
     return;
   }
   if (auto) fotosBloquearGaleria();
@@ -155,25 +181,42 @@ function fotosElegir(files, auto) {
   }
   const n = fotosCola.length;
   if (topado) {
-    fotosEstado('Solo caben ' + FOTOS_COLA_MAX + ' sin subir. Pulsa Subir fotos y añade el resto después.', 'ok');
+    fotosEstado('Solo caben ' + FOTOS_COLA_MAX + ' archivos sin subir. Pulsa Subir fotos y añade el resto después.', 'ok');
   } else if (auto) {
     fotosEstado(n + (n === 1 ? ' foto preparada' : ' fotos preparadas') +
       '. Puedes hacer más y luego pulsa Subir fotos.', 'ok');
   } else if (sel.length > FOTOS_MAX) {
     fotosEstado('Máximo ' + FOTOS_MAX + ' fotos por vez: subiremos las ' + FOTOS_MAX + ' primeras.', 'ok');
   } else {
-    fotosEstado(n + (n === 1 ? ' foto lista para subir.' : ' fotos listas para subir.'), 'ok');
+    fotosEstado(n + (n === 1 ? ' archivo listo para subir.' : ' archivos listos para subir.'), 'ok');
   }
   const prev = document.getElementById('fotos-prev');
   if (!prev) return;
   prev.innerHTML = '';
-  fotosCola.forEach(f => {
-    const img = document.createElement('img');
+  fotosCola.forEach((f, i) => {
+    if (i >= FOTOS_PREV_MAX) return;
     const url = URL.createObjectURL(f);
-    img.src = url;
-    img.onload = () => URL.revokeObjectURL(url);
-    prev.appendChild(img);
+    if (fotosEsVideo(f)) {
+      const video = document.createElement('video');
+      video.src = url;
+      video.muted = true;
+      video.playsInline = true;
+      video.preload = 'metadata';
+      video.onloadeddata = () => URL.revokeObjectURL(url);
+      prev.appendChild(video);
+    } else {
+      const img = document.createElement('img');
+      img.src = url;
+      img.onload = () => URL.revokeObjectURL(url);
+      prev.appendChild(img);
+    }
   });
+  if (fotosCola.length > FOTOS_PREV_MAX) {
+    const mas = document.createElement('span');
+    mas.className = 'fotos-prev-mas';
+    mas.textContent = '+' + (fotosCola.length - FOTOS_PREV_MAX);
+    prev.appendChild(mas);
+  }
 }
 
 async function fotosDecodificar(file) {
@@ -206,11 +249,12 @@ async function fotosProcesar(file) {
   return { full: full, thumb: thumb };
 }
 
-async function fotosPost(blob, nombre) {
+async function fotosPost(blob, nombre, timeoutMs) {
+  const ms = timeoutMs || 20000;
   let err = null;
   for (let intento = 1; intento <= FOTOS_REINTENTOS; intento++) {
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 20000);
+    const timer = setTimeout(() => ctrl.abort(), ms);
     let reintentar = true;
     try {
       const r = await fetch(FOTOS_UPLOAD_URL, {
@@ -233,7 +277,70 @@ async function fotosPost(blob, nombre) {
   throw err || new Error('sin conexión');
 }
 
+/* Bosquejo de miniatura de un vídeo: se espera a que el navegador
+   cargue el primer fotograma y se pinta a JPEG de 480px, igual que
+   las miniaturas de las fotos. Si el navegador no puede (códec raro,
+   vídeo gigante…), devuelve null y el vídeo se sube igualmente:
+   la galería lo muestra con un elemento <video> en la cuadrícula. */
+function fotosVideoThumb(file) {
+  return new Promise(resolve => {
+    let url = null;
+    let terminado = false;
+    const acabar = (blob) => {
+      if (terminado) return;
+      terminado = true;
+      if (url) URL.revokeObjectURL(url);
+      resolve(blob || null);
+    };
+    try {
+      url = URL.createObjectURL(file);
+      const v = document.createElement('video');
+      v.preload = 'metadata';
+      v.muted = true;
+      v.playsInline = true;
+      v.src = url;
+      const capturar = () => {
+        try {
+          const ancho = v.videoWidth;
+          const alto = v.videoHeight;
+          if (!ancho || !alto) return acabar(null);
+          const esc = Math.min(1, 480 / Math.max(ancho, alto));
+          const c = document.createElement('canvas');
+          c.width = Math.max(1, Math.round(ancho * esc));
+          c.height = Math.max(1, Math.round(alto * esc));
+          c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+          c.toBlob(b => acabar(b), 'image/jpeg', 0.8);
+        } catch (e) { acabar(null); }
+      };
+      v.addEventListener('loadeddata', () => {
+        try { v.currentTime = Math.min(0.1, (v.duration || 0) / 2); } catch (e) { capturar(); }
+      });
+      v.addEventListener('seeked', capturar);
+      v.addEventListener('error', () => acabar(null));
+      setTimeout(() => acabar(null), 8000);
+    } catch (e) { acabar(null); }
+  });
+}
+
 async function fotosSubirUna(file) {
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  if (fotosEsVideo(file)) {
+    const ext = FOTOS_VIDEO_TIPOS[file.type];
+    if (!ext) {
+      const e = new Error('formato de vídeo no compatible' + (file.type ? ' (' + file.type + ')' : ''));
+      e.fotosFormato = true;
+      throw e;
+    }
+    if (file.size > FOTOS_VIDEO_MAX) {
+      const e = new Error('vídeo demasiado grande (> ' + Math.round(FOTOS_VIDEO_MAX / 1024 / 1024) + ' MB)');
+      e.fotosFormato = true;
+      throw e;
+    }
+    const thumb = await fotosVideoThumb(file);
+    if (thumb) await fotosPost(thumb, id + '_t.jpg');
+    await fotosPost(file, id + '_v.' + ext, 120000);
+    return;
+  }
   let par = await fotosProcesar(file);
   if (!par) {
     const valido = ['image/jpeg', 'image/png', 'image/webp'].indexOf(file.type) !== -1 && file.size <= 8 * 1024 * 1024;
@@ -246,7 +353,6 @@ async function fotosSubirUna(file) {
     }
     par = { full: file, thumb: file };
   }
-  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   await fotosPost(par.full, id + '_f.jpg');
   await fotosPost(par.thumb, id + '_t.jpg');
 }
@@ -272,7 +378,7 @@ async function fotosSubir() {
   let fallidas = 0;
   let fallosFormato = 0;
   for (let i = 0; i < total; i++) {
-    fotosEstado('Subiendo foto ' + (i + 1) + ' de ' + total + '…');
+    fotosEstado('Subiendo ' + (i + 1) + ' de ' + total + '…');
     try {
       await fotosSubirUna(cola[i]);
       subidas++;
@@ -290,7 +396,7 @@ async function fotosSubir() {
   if (btn) btn.disabled = false;
   fotosSubiendo = false;
   if (fallidas === 0) {
-    fotosEstado('¡' + subidas + (subidas === 1 ? ' foto subida!' : ' fotos subidas!'), 'ok');
+    fotosEstado('¡' + subidas + (subidas === 1 ? ' archivo subido!' : ' archivos subidos!'), 'ok');
   } else if (subidas === 0 && fallosFormato === fallidas) {
     fotosEstado('No podemos procesar alguna de estas fotos. Prueba con fotos guardadas en JPG.', 'err');
   } else if (subidas === 0) {
@@ -321,18 +427,21 @@ async function fotosCargar() {
     const ids = {};
     data.forEach(entrada => {
       const k = typeof entrada === 'string' ? entrada : entrada.key;
-      const m = k && k.match(/^fotos\/(.+)_(f|t)\.jpg$/);
+      /* _f.jpg = foto grande, _t.jpg = miniatura (foto o vídeo),
+         _v.<ext> = vídeo original. Las tres conviven en fotos/. */
+      const m = k && k.match(/^fotos\/(.+)_(f|t|v)\.([a-z0-9]+)$/i);
       if (!m) return;
       if (!ids[m[1]]) ids[m[1]] = {};
-      ids[m[1]][m[2]] = k;
+      ids[m[1]][m[2]] = FOTOS_PUBLIC_BASE + k;
     });
     fotosItems = Object.keys(ids)
-      .filter(id => ids[id].t)
+      .filter(id => ids[id].t || ids[id].v)
       .sort()
       .reverse()
       .map(id => ({
-        thumb: FOTOS_PUBLIC_BASE + ids[id].t,
-        full: FOTOS_PUBLIC_BASE + (ids[id].f || ids[id].t)
+        thumb: ids[id].t || null,
+        full: ids[id].f || ids[id].t || ids[id].v,
+        video: ids[id].v || null
       }));
     fotosPintar();
   } catch (e) {
@@ -347,28 +456,38 @@ function fotosPintar() {
   const gal = document.getElementById('fotos-gal') || document.getElementById('fotos-gal-full');
   const vacio = document.getElementById('fotos-vacio');
   if (!gal) return;
-  const completa = gal.id === 'fotos-gal-full';
   gal.innerHTML = '';
   if (vacio) vacio.style.display = fotosItems.length ? 'none' : '';
-  // Solo en /galeria: "12 fotos" junto al enlace de volver.
+  // Solo en /galeria: "N recuerdos" junto al enlace de volver.
   const contador = document.getElementById('fotos-count');
   if (contador) {
     contador.textContent = fotosItems.length === 1
-      ? '1 foto'
-      : fotosItems.length + ' fotos';
+      ? '1 recuerdo'
+      : fotosItems.length + ' recuerdos';
   }
   fotosItems.forEach((it, i) => {
     const b = document.createElement('button');
     b.type = 'button';
-    b.className = 'fotos-item';
+    b.className = 'fotos-item' + (it.video ? ' es-video' : '');
     b.style.animationDelay = Math.min(i, 8) * 0.04 + 's';
-    const img = document.createElement('img');
-    // En la rejilla de /galeria la foto se ve a 150px, así que
-    // merece la pena cargar la versión grande y no la miniatura.
-    img.src = completa ? it.full : it.thumb;
-    img.loading = 'lazy';
-    img.alt = 'Foto de la boda';
-    b.appendChild(img);
+    /* Miniatura siempre, incluso en /galeria: con 200+ items cargar
+       la versión de 1600px en cada celda tumba el teléfono. La de
+       480px alcanza de sobra para una celda de ~175px. */
+    if (it.thumb) {
+      const img = document.createElement('img');
+      img.src = it.thumb;
+      img.loading = 'lazy';
+      img.alt = it.video ? 'Vídeo de la boda' : 'Foto de la boda';
+      b.appendChild(img);
+    } else if (it.video) {
+      // Vídeo sin miniatura: el navegador no pudo sacar el fotograma.
+      const video = document.createElement('video');
+      video.src = it.video;
+      video.muted = true;
+      video.playsInline = true;
+      video.preload = 'metadata';
+      b.appendChild(video);
+    }
     b.addEventListener('click', () => fotosLbAbrir(i));
     gal.appendChild(b);
   });
@@ -400,8 +519,32 @@ function fotosLbAbrir(i) {
   fotosIdx = i;
   const lb = document.getElementById('fotos-lb');
   const img = document.getElementById('fotos-lb-img');
-  if (!lb || !img) return;
-  img.src = fotosItems[i].full;
+  const vid = document.getElementById('fotos-lb-video');
+  if (!lb) return;
+  const it = fotosItems[i];
+  if (it.video) {
+    // Vídeo: se oculta la imagen y se muestra el reproductor.
+    if (img) {
+      img.style.display = 'none';
+      img.removeAttribute('src');
+    }
+    if (vid) {
+      vid.style.display = '';
+      if (vid.getAttribute('src') !== it.video) vid.setAttribute('src', it.video);
+      const p = vid.play();
+      if (p && p.catch) p.catch(() => {});
+    }
+  } else {
+    if (vid) {
+      vid.pause();
+      vid.style.display = 'none';
+      vid.removeAttribute('src');
+    }
+    if (img) {
+      img.style.display = '';
+      img.src = it.full;
+    }
+  }
   lb.classList.add('abierta');
   // Solo la apertura crea entrada. Si no, pasar de foto a foto con
   // los flechitos o deslizando añadiría una entrada por cada foto y
@@ -423,6 +566,11 @@ function fotosLbMover(d) {
 function fotosLbCerrar() {
   const lb = document.getElementById('fotos-lb');
   if (lb) lb.classList.remove('abierta');
+  // Se corta el vídeo para que no siga sonando con el visor cerrado.
+  const vid = document.getElementById('fotos-lb-video');
+  if (vid) {
+    try { vid.pause(); } catch (e) {}
+  }
   if (fotosLbHist) {
     // El flag se baja ANTES de history.back(), porque esa llamada
     // dispara popstate y el listener de abajo no debe volver a
@@ -442,6 +590,10 @@ window.addEventListener('popstate', () => {
   fotosLbHist = false;
   const lb = document.getElementById('fotos-lb');
   if (lb) lb.classList.remove('abierta');
+  const vid = document.getElementById('fotos-lb-video');
+  if (vid) {
+    try { vid.pause(); } catch (e) {}
+  }
 });
 
 document.addEventListener('keydown', e => {
