@@ -480,13 +480,11 @@ function fotosPintar() {
       img.alt = it.video ? 'Vídeo de la boda' : 'Foto de la boda';
       b.appendChild(img);
     } else if (it.video) {
-      // Vídeo sin miniatura: el navegador no pudo sacar el fotograma.
-      const video = document.createElement('video');
-      video.src = it.video;
-      video.muted = true;
-      video.playsInline = true;
-      video.preload = 'metadata';
-      b.appendChild(video);
+      /* Vídeo sin miniatura: NO se crea un <video> en la rejilla.
+         Cada elemento <video> descarga bytes y decodifica mientras
+         se hace scroll, y con varios tumba la página. Se deja la
+         celda con el fondo dorado y el badge de play; al abrirla,
+         el lightbox carga el vídeo bajo demanda. */
     }
     b.addEventListener('click', () => fotosLbAbrir(i));
     gal.appendChild(b);
@@ -530,9 +528,15 @@ function fotosLbAbrir(i) {
     }
     if (vid) {
       vid.style.display = '';
-      if (vid.getAttribute('src') !== it.video) vid.setAttribute('src', it.video);
-      const p = vid.play();
-      if (p && p.catch) p.catch(() => {});
+      if (vid.getAttribute('src') !== it.video) {
+        vid.removeAttribute('src');
+        vid.load();
+        // Si hay miniatura deja de ser un cuadro negro mientras el
+        // invitado decide pulsar play.
+        if (it.thumb) vid.setAttribute('poster', it.thumb);
+        else vid.removeAttribute('poster');
+        vid.setAttribute('src', it.video);
+      }
     }
   } else {
     if (vid) {
